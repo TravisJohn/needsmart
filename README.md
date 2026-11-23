@@ -11,4 +11,4 @@ Live site: https://travisjohn.github.io/needsmart/
 
 ## Updating
 
-The pages are built in the main project under `concept/`. To refresh this site, copy `needsmart-vision.html` to `index.html` and `needsmart-app.html` to `app.html`, then commit and push.
+The pages are built in the main project under `concept/`. To refresh this site, run `python concept/build_site.py` from the project root (it copies both pages here and adds the document head the story page needs), then commit and push.

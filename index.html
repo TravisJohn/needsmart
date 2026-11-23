@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NeedSmart Product Vision</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -394,6 +399,11 @@ details.numbers td, details.numbers th { padding: 6px 10px; }
 .fpanel > .fp-nav { grid-column: 2; grid-row: 1; align-self: start; }
 @media (max-width: 640px) { .fpanel > .fp-nav { grid-column: 1 / -1; grid-row: auto; } }
 .fp-head { display: flex; flex-direction: column; gap: 6px; }
+.fp-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.fp-impact { font-size: 15px; max-width: 70ch; }
+.fp-impact b { color: var(--accent); }
+.bottomline { background: var(--accent-soft); border-radius: 12px; padding: 12px 16px; font-size: 16px; }
+.bottomline b { color: var(--accent); }
 .fp-head h3 { font-size: clamp(20px, 2.2vw, 24px); }
 .fp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .rmo { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.45fr) minmax(0, 0.9fr); gap: 0; }
@@ -807,8 +817,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
     <div class="wrap">
       <div class="sec-head">
         <span class="eyebrow">Testing the core premise</span>
-        <h2 id="h-premise">Do households really shop in repeating rhythms?</h2>
-        <p>Everything NeedSmart predicts depends on this. If a household buys milk every five days, a reminder on day five is believable. Before we build on it, we'd run a data study on our own eReceipts: four filters, each answering one question. Simple rules come first. Machine learning is used only where it beats them.</p>
+        <h2 id="h-premise">We only remind people when we're confident we're right.</h2>
+        <p>A wrong reminder costs trust. So before we build, we'd run four simple checks on our own eReceipts. Each one protects that trust, and together they tell us exactly how many members the feature can reach.</p>
+        <p class="bottomline"><b>The result:</b> about 4 in 10 members get confident "you'll need this by Thursday" reminders. Everyone else still gets a useful list and deals, and moves up as their history grows.</p>
       </div>
       <div class="fexplorer" id="fexplorer">
         <div class="stages" role="tablist" aria-label="The four study filters" aria-orientation="vertical" id="stages"></div>
@@ -820,9 +831,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
       <div class="figs">
         <div class="fig wide">
           <div class="fh">
-            <span class="stage-tag">Filter 2 · consistency</span>
+            <span class="stage-tag">Filter 2 · Timing</span>
             <h3>What a rhythm looks like: one household, 26 weeks</h3>
-            <p class="cap">Each dot is a purchase. The regularity score measures how much the gap between purchases varies (lower is steadier). Hover a dot for the date.</p>
+            <p class="cap">Each dot is a purchase. The steadiness score shows how much the time between purchases varies (lower is steadier). Hover a dot for the date.</p>
           </div>
           <div class="svgwrap"><svg class="rhythm" id="rhythm" viewBox="0 0 720 262" role="img" aria-label="Purchase timelines for four needs over 26 weeks"></svg></div>
           <div class="legend2">
@@ -834,7 +845,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
         <div class="fig">
           <div class="fh">
-            <span class="stage-tag">Filter 1 · history</span>
+            <span class="stage-tag">Filter 1 · History</span>
             <h3>How long until a pattern shows?</h3>
             <p class="cap">For a brand-new member. A first pattern needs 3 purchases (2 cycles); strong evidence needs 7 (6 cycles).</p>
           </div>
@@ -848,7 +859,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
         <div class="fig">
           <div class="fh">
-            <span class="stage-tag">Filter 2 · consistency</span>
+            <span class="stage-tag">Filter 2 · Timing</span>
             <h3>Which needs repeat most?</h3>
             <p class="cap">Share of households with a regular rhythm for each need.</p>
           </div>
@@ -858,7 +869,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
         <div class="fig">
           <div class="fh">
-            <span class="stage-tag">Filter 3 · shared needs</span>
+            <span class="stage-tag">Filter 3 · Needs everyone shares</span>
             <h3>Same receipts, two lenses</h3>
             <p class="cap">Share of grocery spend that comes back at least 3 times in 26 weeks.</p>
           </div>
@@ -868,7 +879,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
         <div class="fig">
           <div class="fh">
-            <span class="stage-tag">Filter 3 · personal needs</span>
+            <span class="stage-tag">Filter 3 · Each household's needs</span>
             <h3>Same need-group, two different households' rules</h3>
             <p class="cap">Each household gets its own profile for every need, learned from what they've actually bought.</p>
           </div>
@@ -888,7 +899,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
         <div class="fig wide">
           <div class="fh">
-            <span class="stage-tag">Filter 3 · when one need is really two</span>
+            <span class="stage-tag">Filter 3 · When one need is really two</span>
             <h3>The Riveras' yoghurt, last 8 weeks</h3>
             <p class="cap">Two independent rhythms inside one need-group, here kids' pouches and Greek 1kg, blur into one muddled pattern. When we detect that, we split it into two personal needs.</p>
           </div>
@@ -898,7 +909,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
         <div class="fig wide" id="swaps-learn">
           <div class="fh">
-            <span class="stage-tag">Filter 3 · brand indifference</span>
+            <span class="stage-tag">Filter 3 · Will they switch brands?</span>
             <h3>Swaps that learn: offer when they don't mind, stop when they stick</h3>
             <p class="cap">For consistent shoppers, we measure whether the brand matters to them within a need. NeedSmart offers a cheaper alternative only where it doesn't, and watches what they do next.</p>
           </div>
@@ -932,12 +943,12 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
       <div class="metrics hyp">
         <table>
-          <thead><tr><th>Hypothesis</th><th>Expected</th><th>How it's measured</th><th>If it doesn't hold</th></tr></thead>
+          <thead><tr><th>What we expect to find</th><th>Expected</th><th>How we'd check</th><th>If it doesn't hold</th></tr></thead>
           <tbody>
-            <tr><td><b>Enough members qualify</b><span class="sub">Filter 1 · healthy history</span></td><td class="exp">≈ half</td><td>Share of active members with 12+ linked receipts in 26 weeks</td><td>Card-scan nudge for the rest; launch with staples first</td></tr>
-            <tr><td><b>Most grocery spend repeats</b><span class="sub">at need level</span></td><td class="exp">≈ 70%+</td><td>Repeat share of spend, 26-week window, eligible households</td><td>NeedSmart leads with deal matching; timing reminders only for proven staples</td></tr>
-            <tr><td><b>Most eligible households are consistent</b><span class="sub">Filter 2 · steady or mixed tier</span></td><td class="exp">≈ 80%</td><td>Household tier from need-level regularity scores, with a drift check</td><td>Deals-first list for more households; reminders only where earned</td></tr>
-            <tr><td><b>Simple rules are a strong start</b><span class="sub">Filter 4 · ML adds lift on short histories</span></td><td class="exp">ML beats rules</td><td>Precision and recall on held-out weeks: model vs rhythm rule vs per-product baseline</td><td>Ship the rules; ML stays in research until it wins</td></tr>
+            <tr><td><b>Enough members qualify</b><span class="sub">Filter 1 · History</span></td><td class="exp">≈ half</td><td>Share of active members with 12+ receipts in 26 weeks</td><td>Card-scan nudge for the rest; launch with staples first</td></tr>
+            <tr><td><b>Most grocery spend repeats</b><span class="sub">Filter 3 · Needs</span></td><td class="exp">≈ 70%+</td><td>Share of spend on things bought again within 26 weeks</td><td>NeedSmart leads with deal matching; timing reminders only for proven staples</td></tr>
+            <tr><td><b>Most households have steady habits</b><span class="sub">Filter 2 · Timing</span></td><td class="exp">≈ 80%</td><td>How alike the time between purchases is, rechecked on recent months</td><td>Deals-first list for more households; reminders only where earned</td></tr>
+            <tr><td><b>Simple rules are a strong start</b><span class="sub">Filter 4 · Accuracy</span></td><td class="exp">Smarter model helps newer members</td><td>On past weeks: how many reminders were right, and how many buys they caught, simple rule vs smarter model</td><td>Ship the simple rule; the smarter model waits until it wins</td></tr>
             <tr><td><b>Rhythms survive specials</b><span class="sub">stock-ups shift, not break, the pattern</span></td><td class="exp">Gap stretches by pack</td><td>Gap after a promo stock-up vs quantity bought</td><td>Pause reminders for a need after a stock-up until the usual gap passes</td></tr>
           </tbody>
         </table>
@@ -1459,51 +1470,56 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
   }
 
   /* ---------- Premise study: the four filters, each with reason / method / outcome ---------- */
+  // Plain-language copy for a product audience: question, one-line answer, and the impact on members.
   const filters = [
-    { q: "Is there enough history?", line: "Enough receipts to see a pattern.", tech: ["rules", "Rules"], exp: "≈ half of active members qualify",
-      reason: "A prediction is only as good as the history behind it. With too few shops, or a card that often isn't scanned, missing receipts look like broken habits and reminders go wrong.",
-      method: ["Count linked receipts over the last 26 weeks. 12 or more qualifies.", "Check how often they shop, and whether gaps look like missed card scans.", "Estimate their share of wallet: compare their weekly spend with us to what a similar household (same size, same area) typically spends on groceries. Well below that means they also shop elsewhere, so some \"missed\" buys may simply happen at another store.", "For new members, an item needs about 3 buys: milk shows in about 2 weeks, coffee in about 7."],
-      outcome: "Each member is either <b>eligible</b> or <b>building history</b>. Eligible members move on to Filter 2. Everyone else sees \"Scan your card for a few more weeks to unlock your list.\"",
+    { tag: "History", q: "Do we know them well enough?", line: "Enough receipts to see a pattern.", tech: ["rules", "Simple rule"], exp: "≈ half of active members",
+      impact: "<b>Why it matters:</b> we never guess from thin history, and everyone else gets a clear way in.",
+      reason: "A reminder is only as good as the history behind it. With too few shops, or a card that often isn't scanned, gaps look like broken habits and reminders go wrong.",
+      method: ["Count receipts with a scanned card over the last 26 weeks. 12 or more qualifies.", "Check how often they shop, and whether gaps look like forgotten card scans.", "Check how much of their grocery shopping is with us, against what a similar household (same size, same area) usually spends. Well below means they also shop elsewhere, so some \"missed\" buys happen at another store.", "For new members, an item needs about 3 buys: milk shows in about 2 weeks, coffee in about 7."],
+      outcome: "Members who qualify move on to the next check. Everyone else sees <b>\"Scan your card for a few more weeks to unlock your list.\"</b>",
       ev: "How long until a pattern shows" },
-    { q: "Do they shop the same way, week after week?", line: "Steady habits make believable reminders.", tech: ["rules", "Rules"], exp: "≈ 80% steady or mixed",
-      reason: "A reminder only feels helpful if it lands at the right time, and that needs habits that repeat. Where habits don't repeat, NeedSmart should say less, not guess.",
-      method: ["For each item, measure how steady the gaps between purchases are. Lower scores are steadier.", "Allow for how much they bought. Two bottles of milk instead of one should push the next buy back, not count as a broken habit.", "Sort the household as steady, mixed or unpredictable.", "Compare the last three months with the three before. If habits have changed, newer behaviour counts more."],
-      outcome: "Every eligible household gets a tier, and each tier gets a different list. <b>Steady:</b> confident \"due\" reminders. <b>Mixed:</b> reminders for staples, the rest under \"Maybe\". <b>Unpredictable:</b> deals first, no timing claims.",
+    { tag: "Timing", q: "Are they creatures of habit?", line: "They rebuy things on a steady rhythm.", tech: ["rules", "Simple rule"], exp: "≈ 8 in 10 have steady habits",
+      impact: "<b>Why it matters:</b> reminders land on the right day. Where habits don't repeat, NeedSmart says less instead of guessing.",
+      reason: "A reminder only feels helpful if it arrives at the right time, and that needs habits that repeat.",
+      method: ["For each item, look at the time between purchases. The more alike those gaps are, the steadier the habit.", "Allow for how much they bought. Two bottles of milk instead of one should push the next buy back, not count as a broken habit.", "Sort each household as steady, mixed or unpredictable.", "Check recent months against earlier ones. If habits have changed, the newer ones count more."],
+      outcome: "Each household gets the list that suits it. <b>Steady:</b> confident \"due\" reminders. <b>Mixed:</b> reminders for staples, the rest under \"Maybe\". <b>Unpredictable:</b> deals first, no timing promises.",
       ev: "One household, 26 weeks · Which needs repeat most" },
-    { q: "What do they actually need?", line: "Needs, not barcodes, plus each household's habits.", tech: ["ml", "ML suggests, people approve"], exp: "≈ 70%+ of spend repeats by need",
-      reason: "By barcode, most products look like one-offs, because brands, sizes and flavours change. Grouped by what they are, the repeats appear. And two households buying \"yoghurt\" can want very different things.",
-      method: ["Start from our product hierarchy. Refine it with products members switch between, which belong together.", "ML suggests the groups; a person approves them.", "For each household and need, measure brand indifference: how often they switch brands, whether switches follow specials, and whether they come back.", "Learn must-haves that never change, like lactose-free, and usual pack size.", "If one need hides two rhythms, like kids' pouches and Greek yoghurt, split it in two."],
-      outcome: "A <b>personal need list</b> for each household. Swaps are offered <b>only where the brand doesn't matter to them</b>, and stop when they stick: never for a loyal coffee buyer, always the cheapest acceptable option for a flexible pasta buyer.",
-      ev: "Same receipts, two lenses · Two households' rules · The yoghurt split · Swaps that learn" },
-    { q: "Can we predict the next buy?", line: "Simple rules first. ML only if it wins.", tech: ["ml", "ML must beat the rules"], exp: "ML wins on short histories",
-      reason: "This is the promise members see: \"you'll need coffee by Thursday\". Wrong reminders cost trust faster than missed ones, so every prediction is tested before anyone sees it.",
-      method: ["Baseline: the simple rhythm rule. Milk is due about 5 days after the last purchase.", "Challenger: an ML model that also weighs specials, holidays, household changes and similar households. It helps most where history is short.", "Test both on later weeks neither has seen. Count how many reminders were right and how many purchases they caught."],
-      outcome: "Whichever wins ships. If ML doesn't beat the rules, we <b>launch on the rules</b> and ML stays in research. Either way, only tested predictions become \"due\" reminders.",
-      ev: "Hypotheses table at the end of this section" }
+    { tag: "Needs", q: "Do we know what they need?", line: "\"Milk\", not a barcode, and whether they'd switch brands.", tech: ["ml", "Computer suggests, people approve"], exp: "≈ 7 in 10 dollars go on repeat needs",
+      impact: "<b>Why it matters:</b> cheaper swaps are offered only where the brand doesn't matter to them, so they save without being annoyed.",
+      reason: "Product by product, most items look like one-offs, because brands and sizes change. Grouped by what they are, like \"milk\", the repeats appear. And two households buying \"yoghurt\" can want very different things.",
+      method: ["Group products that do the same job, using our product range and what members switch between. A computer suggests the groups; a person approves them.", "For each household, see whether they switch brands freely, only on specials, or always come back to one.", "Note what never changes, like lactose-free, and their usual pack size. If one need is really two, like kids' pouches and Greek yoghurt, split it."],
+      outcome: "A <b>personal list of needs</b> for each household, with swaps <b>only where the brand doesn't matter to them</b>. Never for a loyal coffee buyer; always the cheapest good option for a flexible pasta buyer.",
+      ev: "the four Filter 3 charts" },
+    { tag: "Accuracy", q: "Are our predictions right?", line: "Tested on past weeks before anyone sees one.", tech: ["ml", "Smarter model only if it's more accurate"], exp: "Helps most for newer members",
+      impact: "<b>Why it matters:</b> only proven predictions reach members, so \"you'll need coffee by Thursday\" is something they can trust.",
+      reason: "This is the promise members see. A wrong reminder costs trust faster than a missed one, so every prediction is tested before anyone sees it.",
+      method: ["Start simple: milk is due about 5 days after the last purchase.", "Try a smarter model that also allows for specials, holidays and changes at home. It helps most where history is short.", "Test both on past weeks they haven't seen. Count how many reminders were right and how many purchases they caught."],
+      outcome: "Whichever is more accurate ships. If the smarter model doesn't win, we <b>launch with the simple rule</b>. Either way, only tested predictions become \"due\" reminders.",
+      ev: "What we expect to find, at the end of this section" }
   ];
   /* Cohort funnel, per 100 active members (illustrative). levels[i+1] is what survives filter i;
      zooms[i] splits levels[i] into who moves on and what everyone else gets. Segments sum to the parent. */
   const MIX = "color-mix(in srgb, var(--accent) 45%, var(--surface-2))";
   const levels = [
     { n: 100, l: "Active members", s: "with a linked card" },
-    { n: 58, l: "Enough history", s: "after Filter 1" },
-    { n: 46, l: "Shop consistently", s: "after Filter 2" },
-    { n: 41, l: "Enough regular needs", s: "after Filter 3" },
-    { n: 38, l: "On-time reminders", s: "after Filter 4" }
+    { n: 58, l: "Known well enough", s: "after Filter 1 · History" },
+    { n: 46, l: "Creatures of habit", s: "after Filter 2 · Timing" },
+    { n: 41, l: "Clear needs", s: "after Filter 3 · Needs" },
+    { n: 38, l: "Confident reminders", s: "after Filter 4 · Accuracy" }
   ];
   const zooms = [
-    { segs: [{ k: "Enough history", n: 58, keep: true, p: "12+ linked receipts in 26 weeks. Moves on to Filter 2." },
+    { segs: [{ k: "Enough receipts", n: 58, keep: true, p: "12+ receipts in 26 weeks. Moves on to the timing check." },
              { k: "Building history", n: 42, p: "Sees \"Scan your card for a few more weeks to unlock your list.\"" }],
-      note: "About 1 in 6 of the 58 has a low share of wallet, so their reminders stay cautious." },
+      note: "About 1 in 6 of the 58 does much of their grocery shopping elsewhere, so their reminders stay cautious." },
     { segs: [{ k: "Steady", n: 22, keep: true, p: "Confident \"due\" reminders for most of the list." },
              { k: "Mixed", n: 24, keep: true, c: MIX, ink: "var(--fg)", p: "Reminders for staples; the rest under \"Maybe\"." },
              { k: "Unpredictable", n: 12, p: "Deals-first list with no timing claims." }] },
     { segs: [{ k: "5+ regular needs", n: 41, keep: true, p: "A personal need list, about 14 needs each." },
              { k: "Fewer than 5", n: 5, p: "A short staples list under \"Maybe\"." }],
       note: "About 1 in 6 has a need that splits in two, like the Riveras' yoghurt." },
-    { segs: [{ k: "Reminders pass the test", n: 38, keep: true, p: "On-time \"due\" reminders, tested on weeks the model never saw." },
+    { segs: [{ k: "Predictions pass the test", n: 38, keep: true, p: "Confident \"due\" reminders, proven on past weeks first." },
              { k: "Not yet", n: 3, p: "Stays on \"Maybe\" until the timing proves itself." }],
-      note: "38 of every 100 active members get on-time reminders. Everyone else still gets a useful list." }
+      note: "About 4 in 10 active members get confident reminders. Everyone else still gets a useful list and deals." }
   ];
   function cohortHTML(i) {
     const parent = levels[i], z = zooms[i];
@@ -1528,7 +1544,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
   let fsel = 0;
   $("#stages").innerHTML = filters.map((f, i) =>
     `<button type="button" class="stage" role="tab" id="ftab-${i}" aria-controls="fpanel" aria-selected="false" tabindex="-1" data-f="${i}">
-      <span class="n">Filter ${i + 1}</span><h4>${f.q}</h4><p>${f.line}</p>
+      <span class="n">Filter ${i + 1} · ${f.tag}</span><h4>${f.q}</h4><p>${f.line}</p>
       <span class="meta"><span class="cnt">Keeps <b>${levels[i + 1].n}</b> of ${levels[i].n}</span><span class="tchip ${f.tech[0]}">${f.tech[1]}</span></span><span class="more">Reason, method, outcome ↓</span></button>`).join("");
   function showFilter(i, focus) {
     fsel = (i + filters.length) % filters.length;
@@ -1536,13 +1552,13 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
     $$(".stage").forEach((b, k) => { b.setAttribute("aria-selected", String(k === fsel)); b.tabIndex = k === fsel ? 0 : -1; });
     $("#fpanel").setAttribute("aria-labelledby", "ftab-" + fsel);
     $("#fpanel").innerHTML = `
-      <div class="fp-head"><span class="eyebrow">Filter ${fsel + 1} of 4</span><h3>${f.q}</h3>
-        <div class="fp-chips"><span class="tchip ${f.tech[0]}">${f.tech[1]}</span><span class="tchip exp">Expected: ${f.exp} · illustrative</span></div></div>
+      <div class="fp-head"><div class="fp-top"><span class="eyebrow">Filter ${fsel + 1} of 4 · ${f.tag}</span><span class="tchip ${f.tech[0]}">${f.tech[1]}</span><span class="tchip exp">Expected: ${f.exp} · illustrative</span></div>
+        <h3>${f.q}</h3><p class="fp-impact">${f.impact}</p></div>
       ${cohortHTML(fsel)}
       <div class="rmo">
-        <div><span class="k"><i>1</i>Reason</span><p>${f.reason}</p></div>
-        <div><span class="k"><i>2</i>Method</span><ul>${f.method.map(m => `<li>${m}</li>`).join("")}</ul></div>
-        <div><span class="k"><i>3</i>Outcome</span><p>${f.outcome}</p><p class="ev">Evidence below: ${f.ev}</p></div>
+        <div><span class="k"><i>1</i>The reason</span><p>${f.reason}</p></div>
+        <div><span class="k"><i>2</i>How we check</span><ul>${f.method.map(m => `<li>${m}</li>`).join("")}</ul></div>
+        <div><span class="k"><i>3</i>What members get</span><p>${f.outcome}</p><p class="ev">Evidence below: ${f.ev}</p></div>
       </div>
       <div class="fp-nav">
         ${fsel > 0 ? `<button type="button" class="btn" data-fnav="-1">← Filter ${fsel}</button>` : ""}
