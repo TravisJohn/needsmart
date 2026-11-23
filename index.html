@@ -337,6 +337,12 @@ kbd { font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--li
 .fig .cap { font-size: 14px; color: var(--muted); max-width: 70ch; }
 .fig .read { font-size: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
 .fig .read b { color: var(--accent); }
+/* Impact-first note on each visual: why we look, what we learn, what it changes for NeedSmart */
+.so { display: flex; flex-direction: column; gap: 7px; background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin-top: 6px; max-width: 920px; }
+.so div { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 12px; font-size: 14px; line-height: 1.45; }
+.so b { font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); padding-top: 2px; }
+.fig .cap b { color: var(--fg); font-weight: 600; }
+@media (max-width: 560px) { .so div { grid-template-columns: 1fr; gap: 1px; } }
 .svgwrap { overflow-x: auto; }
 .svgwrap svg { display: block; width: 100%; min-width: 600px; height: auto; }
 .rhythm text { font-family: var(--font-body); }
@@ -833,7 +839,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <div class="fh">
             <span class="stage-tag">Filter 2 · Timing</span>
             <h3>What a rhythm looks like: one household, 26 weeks</h3>
-            <p class="cap">Each dot is a purchase. The steadiness score shows how much the time between purchases varies (lower is steadier). Hover a dot for the date.</p>
+            <div class="so"><div><b>Why it matters</b><span>A reminder is only welcome if it arrives when the item is actually running low. This shows whether a household's buying is predictable enough for that.</span></div><div><b>What we'd learn</b><span>Which items run like clockwork and which don't. Regular doesn't mean frequent: coffee every 24 days is more predictable than milk every 5.</span></div><div><b>What it changes</b><span>Every item gets a rule: remind on a date, show under "Maybe", or stay quiet and show it only when it's on special.</span></div></div>
+            <p class="cap"><b>How to read it:</b> Each dot is a purchase. The steadiness score shows how much the time between purchases varies (lower is steadier). Hover a dot for the date.</p>
           </div>
           <div class="svgwrap"><svg class="rhythm" id="rhythm" viewBox="0 0 720 262" role="img" aria-label="Purchase timelines for four needs over 26 weeks"></svg></div>
           <div class="legend2">
@@ -847,7 +854,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <div class="fh">
             <span class="stage-tag">Filter 1 · History</span>
             <h3>How long until a pattern shows?</h3>
-            <p class="cap">For a brand-new member. A first pattern needs 3 purchases (2 cycles); strong evidence needs 7 (6 cycles).</p>
+            <div class="so"><div><b>Why it matters</b><span>How quickly a new member gets value, and what we show them in the meantime.</span></div><div><b>What we'd learn</b><span>Fast-moving staples show a pattern within weeks. Slow items like coffee take a couple of months.</span></div><div><b>What it changes</b><span>New members start with staples and a "scan your card" nudge. Existing members get a full list on day one from past receipts.</span></div></div>
+            <p class="cap"><b>How to read it:</b> For a brand-new member. A first pattern needs 3 purchases (2 cycles); strong evidence needs 7 (6 cycles).</p>
           </div>
           <div class="rng" id="ttp"></div>
           <div class="legend2">
@@ -861,7 +869,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <div class="fh">
             <span class="stage-tag">Filter 2 · Timing</span>
             <h3>Which needs repeat most?</h3>
-            <p class="cap">Share of households with a regular rhythm for each need.</p>
+            <div class="so"><div><b>Why it matters</b><span>The first reminders a member sees decide whether they trust the rest.</span></div><div><b>What we'd learn</b><span>Which items most households rebuy on a steady rhythm, and which are hit and miss.</span></div><div><b>What it changes</b><span>Launch reminders on staples first. Longer-cycle items earn their way in once a household confirms them.</span></div></div>
+            <p class="cap"><b>How to read it:</b> Share of households with a regular rhythm for each need.</p>
           </div>
           <div class="hbars" id="byneed"></div>
           <p class="read">Staples are where reminders earn trust first. <b>Long-cycle household items</b> stay in "Maybe" until the household confirms.</p>
@@ -871,7 +880,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <div class="fh">
             <span class="stage-tag">Filter 3 · Needs everyone shares</span>
             <h3>Same receipts, two lenses</h3>
-            <p class="cap">Share of grocery spend that comes back at least 3 times in 26 weeks.</p>
+            <div class="so"><div><b>Why it matters</b><span>This is the test of the whole idea. Looked at product by product, repeat buying is hidden.</span></div><div><b>What we'd learn</b><span>How much of a household's grocery spend really comes back each month, which is the size of the opportunity.</span></div><div><b>What it changes</b><span>NeedSmart predicts needs like "milk", not barcodes, so a special or a cheaper brand can fill the need.</span></div></div>
+            <p class="cap"><b>How to read it:</b> Share of grocery spend that comes back at least 3 times in 26 weeks.</p>
           </div>
           <div class="hbars" id="lens"></div>
           <p class="read">At barcode level most items look like one-offs, because brands and sizes change. Grouped by need, <b>the repeat pattern appears</b>. That's why NeedSmart predicts needs, not products.</p>
@@ -881,7 +891,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <div class="fh">
             <span class="stage-tag">Filter 3 · Each household's needs</span>
             <h3>Same need-group, two different households' rules</h3>
-            <p class="cap">Each household gets its own profile for every need, learned from what they've actually bought.</p>
+            <div class="so"><div><b>Why it matters</b><span>The same item needs different handling in different homes. Offering a swap to a loyal buyer is how you lose them.</span></div><div><b>What we'd learn</b><span>For each household and item: do they stick to one brand, what must never change, and how do they react to specials.</span></div><div><b>What it changes</b><span>Decides, item by item, whether NeedSmart just reminds, flags their own brand's special, or suggests a cheaper option.</span></div></div>
+            <p class="cap"><b>How to read it:</b> Each household gets its own profile for every need, learned from what they've actually bought.</p>
           </div>
           <div class="ptable">
             <table>
@@ -901,7 +912,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <div class="fh">
             <span class="stage-tag">Filter 3 · When one need is really two</span>
             <h3>The Riveras' yoghurt, last 8 weeks</h3>
-            <p class="cap">Two independent rhythms inside one need-group, here kids' pouches and Greek 1kg, blur into one muddled pattern. When we detect that, we split it into two personal needs.</p>
+            <div class="so"><div><b>Why it matters</b><span>Two habits mixed into one item make both look random, so reminders miss and the household looks less predictable than it is.</span></div><div><b>What we'd learn</b><span>When one item hides two separate rhythms, like the kids' pouches and the Greek tub.</span></div><div><b>What it changes</b><span>Split it into two needs, each with its own accurate reminder. This brings back households that would otherwise fail the timing check.</span></div></div>
+            <p class="cap"><b>How to read it:</b> Two independent rhythms inside one need-group, here kids' pouches and Greek 1kg, blur into one muddled pattern. When we detect that, we split it into two personal needs.</p>
           </div>
           <div class="svgwrap"><svg class="rhythm" id="split" viewBox="0 0 720 210" role="img" aria-label="Yoghurt purchases as one need and split into two"></svg></div>
           <p class="read" id="split-read"></p>
@@ -911,7 +923,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <div class="fh">
             <span class="stage-tag">Filter 3 · Will they switch brands?</span>
             <h3>Swaps that learn: offer when they don't mind, stop when they stick</h3>
-            <p class="cap">For consistent shoppers, we measure whether the brand matters to them within a need. NeedSmart offers a cheaper alternative only where it doesn't, and watches what they do next.</p>
+            <div class="so"><div><b>Why it matters</b><span>Swaps are where much of the saving comes from, but a swap someone doesn't want costs trust.</span></div><div><b>What we'd learn</b><span>For each household and item, whether the brand matters to them, and how that changes over time.</span></div><div><b>What it changes</b><span>Savings are offered where they're welcome and stop on their own where they're not. Loyal buyers are never pushed off their brand.</span></div></div>
+            <p class="cap"><b>How to read it:</b> For consistent shoppers, we measure whether the brand matters to them within a need. NeedSmart offers a cheaper alternative only where it doesn't, and watches what they do next.</p>
           </div>
           <div class="ind-grid">
             <div>
@@ -1106,6 +1119,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
         <span class="eyebrow">Immediate impact</span>
         <h2 id="h-impact">Same week, same needs. With and without NeedSmart.</h2>
         <p>The Rivera household's 8 needs for Thursday, priced two ways. Switch the comparison to see the honest number and the one most apps would quote.</p>
+        <div class="so"><div><b>Why it matters</b><span>This is the saving a member would actually feel in one shop, and the number the business case rests on.</span></div><div><b>What we'd learn</b><span>Where the saving comes from (specials, cheaper brands, buying early) and the gap between the honest figure and the flattering one.</span></div><div><b>What it changes</b><span>We lead with the honest number, against what the household usually pays. The pilot then measures it from real receipts.</span></div></div>
       </div>
 
       <div class="seg" role="group" aria-label="Compare NeedSmart against">
@@ -1154,6 +1168,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
         <span class="eyebrow">How it works</span>
         <h2 id="h-how">Learn centrally. Personalise on the phone.</h2>
         <p>Our de-identified purchase history teaches NeedSmart how households shop. Each member's own list is then worked out on their phone, from the eReceipts they already see, so we never build a new central profile of what a household will need.</p>
+        <div class="so"><div><b>Why it matters</b><span>It answers "where does the personal data go?" before legal, security and members ask.</span></div><div><b>What we'd learn</b><span>What is used centrally (de-identified history, shared data packs) and what stays on the member's phone (their own list).</span></div><div><b>What it changes</b><span>No new profile to hold or protect, almost no cost per member, and consent that's simple to explain.</span></div></div>
       </div>
 
       <div class="arch">
