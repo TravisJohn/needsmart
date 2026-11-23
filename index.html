@@ -149,6 +149,10 @@ section.block:last-of-type { border-bottom: 0; }
 .thennow td:last-child { font-weight: 600; }
 .thennow tfoot td { background: var(--accent-soft); color: var(--fg); font-weight: 500 !important; white-space: normal !important; font-size: 14.5px !important; }
 .thennow tfoot b { color: var(--accent); }
+.tn-tag { display: inline-block; margin-left: 6px; font-size: 10px; letter-spacing: .04em; padding: 1px 7px; border-radius: 999px; vertical-align: 1px; }
+.tn-tag.built { color: var(--accent); background: var(--accent-soft); }
+.tn-tag.next { color: var(--warn); border: 1px dashed currentColor; }
+.thennow td:last-child { font-weight: 500; }
 
 /* ---------- Swap lineage ---------- */
 .ind-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
@@ -719,7 +723,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
       <div class="sec-head">
         <span class="eyebrow">Where this started</span>
         <h2 id="h-origin">It began as my own side project, with one simple idea.</h2>
-        <p>Before the business was interested, NeedSmart was a tool for my own household. The extra layers on this page, like cohorts, models and privacy design, came later. The core is still the simple idea.</p>
+        <p>Before the business was interested, NeedSmart was a tool for my own household. The extra layers on this page, like cohorts, models and privacy design, are the proposal for taking it to members. None of that is built yet. The core is still the simple idea.</p>
       </div>
       <div class="origin">
         <div class="orig-card">
@@ -733,15 +737,15 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
         </div>
         <div class="thennow">
           <table>
-            <thead><tr><th></th><th>Then · my side project</th><th>Now · for our members</th></tr></thead>
+            <thead><tr><th></th><th>Then · my side project <span class="tn-tag built">Built</span></th><th>Proposed · for our members <span class="tn-tag next">Not built yet</span></th></tr></thead>
             <tbody>
-              <tr><td>Who it serves</td><td>One household: mine</td><td>Millions of members</td></tr>
-              <tr><td>Purchase data</td><td>My own PDF receipts</td><td>De-identified history to learn from; each member's eReceipts for their list</td></tr>
-              <tr><td>Offers</td><td>Specials from two supermarkets</td><td>Our own specials, member prices and own brand</td></tr>
-              <tr><td>Where it runs</td><td>My laptop</td><td>Each member's phone, with shared packs from our cloud</td></tr>
-              <tr><td>Savings measured against</td><td>What I usually pay</td><td>What each household usually pays</td></tr>
+              <tr><td>Who it serves</td><td>One household: mine</td><td>Could serve millions of members</td></tr>
+              <tr><td>Purchase data</td><td>My own PDF receipts</td><td>Would learn from de-identified history; each member's eReceipts would build their list</td></tr>
+              <tr><td>Offers</td><td>Specials from two supermarkets</td><td>Would use our own specials, member prices and own brand</td></tr>
+              <tr><td>Where it runs</td><td>My laptop</td><td>Would run on each member's phone, with shared packs from our cloud</td></tr>
+              <tr><td>Savings measured against</td><td>What I usually pay</td><td>Would be what each household usually pays</td></tr>
             </tbody>
-            <tfoot><tr><td colspan="3"><b>What hasn't changed:</b> predict the need, find the best way to buy it, and tell the truth about savings.</td></tr></tfoot>
+            <tfoot><tr><td colspan="3"><b>What carries over:</b> predict the need, find the best way to buy it, and tell the truth about savings. The side project proved this works for one household; the proposal is to test it for members.</td></tr></tfoot>
           </table>
         </div>
       </div>
