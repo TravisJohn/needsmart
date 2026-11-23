@@ -1,0 +1,1842 @@
+<title>NeedSmart Product Vision</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a single scrolling pitch. Receipt-to-list hero, then a live phone prototype with a
+   presenter's narration rail, then the plumbing, the gaps with fixes, the plan and the ask. */
+:root {
+  --bg: #f3f5f2;
+  --surface: #ffffff;
+  --surface-2: #e9eee9;
+  --fg: #16212a;
+  --muted: #56646c;
+  --line: #cfd8d1;
+  --accent: #1b6f52;
+  --accent-ink: #ffffff;
+  --accent-soft: #d8ede2;
+  --warn: #a4501f;
+  --warn-soft: #f7e4d6;
+  --info: #2e5d8a;
+  --info-soft: #dde8f3;
+  --paper: #fffdf7;
+  --paper-ink: #2b2a26;
+  --bezel: #182027;
+  --shadow: rgba(14, 28, 22, 0.16);
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1215; --surface: #161f24; --surface-2: #1e292f; --fg: #e4ebe6; --muted: #98a8a0;
+    --line: #2c3a40; --accent: #4cbd8c; --accent-ink: #08150f; --accent-soft: #163a2b;
+    --warn: #e69264; --warn-soft: #3b2418; --info: #7fb0dd; --info-soft: #1a2b3b;
+    --paper: #f4efe1; --paper-ink: #2b2a26; --bezel: #030608; --shadow: rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1215; --surface: #161f24; --surface-2: #1e292f; --fg: #e4ebe6; --muted: #98a8a0;
+  --line: #2c3a40; --accent: #4cbd8c; --accent-ink: #08150f; --accent-soft: #163a2b;
+  --warn: #e69264; --warn-soft: #3b2418; --info: #7fb0dd; --info-soft: #1a2b3b;
+  --paper: #f4efe1; --paper-ink: #2b2a26; --bezel: #030608; --shadow: rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.015em; line-height: 1.1; }
+p { margin: 0; }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1180px; margin: 0 auto; }
+
+/* ---------- Top bar ---------- */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.topbar .wrap { display: flex; align-items: center; gap: 20px; height: 58px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 19px; text-decoration: none; color: var(--fg); flex-shrink: 0; }
+.brand-mark { width: 28px; height: 28px; border-radius: 8px; background: var(--accent); display: grid; place-items: center; }
+.brand-mark svg { width: 16px; height: 16px; }
+.nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; flex: 1; min-width: 0; }
+.nav::-webkit-scrollbar { display: none; }
+.nav a { font-size: 13.5px; font-weight: 500; color: var(--muted); text-decoration: none; padding: 6px 11px; border-radius: 999px; white-space: nowrap; }
+.nav a:hover { color: var(--fg); background: var(--surface-2); }
+.nav a.on { color: var(--accent); background: var(--accent-soft); }
+.stamp { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--warn); border: 1px dashed currentColor; border-radius: 5px; padding: 3px 8px; white-space: nowrap; flex-shrink: 0; }
+@media (max-width: 760px) { .topbar .stamp { display: none; } }
+.tryme { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; padding: 7px 14px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 13.5px; text-decoration: none; }
+.tryme:hover { filter: brightness(1.08); }
+
+/* ---------- Sections ---------- */
+section.block { padding-block: 88px; border-bottom: 1px solid var(--line); }
+section.block:last-of-type { border-bottom: 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+.sec-head { display: flex; flex-direction: column; gap: 14px; max-width: 760px; margin-bottom: 44px; }
+.sec-head h2 { font-size: clamp(30px, 4.2vw, 46px); font-weight: 800; }
+.sec-head p { color: var(--muted); font-size: 18px; max-width: 64ch; }
+
+/* ---------- Hero ---------- */
+.hero { padding-block: 72px 88px; border-bottom: 1px solid var(--line); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 48px; align-items: center; }
+.hero-copy { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.hero h1 { font-size: clamp(40px, 5.8vw, 70px); font-weight: 800; letter-spacing: -0.03em; line-height: 0.98; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero .lede { font-size: 19.5px; color: var(--muted); max-width: 50ch; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
+.hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+.hero-meta span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; font-weight: 700; font-size: 15px; text-decoration: none; border: 1.5px solid var(--accent); cursor: pointer; background: transparent; color: var(--accent); }
+.btn.solid { background: var(--accent); color: var(--accent-ink); }
+.btn:hover { filter: brightness(1.06); }
+
+.transform { display: grid; grid-template-columns: minmax(0, 0.78fr) auto minmax(0, 1.22fr); align-items: center; gap: 14px; min-width: 0; }
+.receipt { background: var(--paper); color: var(--paper-ink); font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55; padding: 16px 14px 22px; box-shadow: 0 16px 34px -18px var(--shadow); transform: rotate(-2.5deg); position: relative;
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 12px 100%;
+          mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 12px 100%; }
+.receipt .r-head { text-align: center; font-weight: 600; letter-spacing: 0.08em; padding-bottom: 6px; border-bottom: 1px dashed #b8b2a2; margin-bottom: 6px; }
+.receipt .r-line { display: flex; justify-content: space-between; gap: 8px; white-space: nowrap; }
+.receipt .r-line span:first-child { overflow: hidden; text-overflow: ellipsis; }
+.receipt .r-total { border-top: 1px dashed #b8b2a2; margin-top: 6px; padding-top: 6px; font-weight: 600; }
+.receipt .r-foot { text-align: center; margin-top: 8px; opacity: 0.7; font-size: 10.5px; }
+.arrow-col { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--accent); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+.arrow-col svg { width: 44px; height: 24px; }
+.listcard { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px; box-shadow: 0 22px 44px -24px var(--shadow); display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.listcard h4 { font-size: 17px; }
+.listcard .lc-sub { font-size: 12.5px; color: var(--muted); margin-top: -6px; }
+.lc-row { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13.5px; }
+.lc-row .tick { width: 16px; height: 16px; border: 1.5px solid var(--line); border-radius: 5px; }
+.lc-row .why { display: block; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lc-row .px { font-family: var(--font-mono); font-size: 12.5px; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.lc-row > span:nth-child(2) { font-weight: 600; min-width: 0; }
+.save { font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 7px; white-space: nowrap; }
+.lc-total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--line); padding-top: 10px; font-size: 13px; }
+.lc-total b { font-family: var(--font-display); font-size: 20px; color: var(--accent); }
+
+@media (max-width: 960px) {
+  .hero .wrap { grid-template-columns: 1fr; gap: 44px; }
+}
+@media (max-width: 560px) {
+  .transform { grid-template-columns: 1fr; }
+  .receipt { transform: rotate(-1.5deg); max-width: 300px; justify-self: center; width: 100%; }
+  .arrow-col svg { transform: rotate(90deg); }
+}
+
+/* ---------- Origin ---------- */
+.origin { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 36px; align-items: start; }
+@media (max-width: 900px) { .origin { grid-template-columns: 1fr; gap: 28px; } }
+.orig-card { background: var(--paper); color: var(--paper-ink); border-radius: 6px; padding: 26px 26px 30px; box-shadow: 0 18px 38px -22px var(--shadow); display: flex; flex-direction: column; gap: 16px; transform: rotate(-0.6deg); }
+.orig-card .k { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6553; border-bottom: 1px dashed #b8b2a2; padding-bottom: 10px; }
+.orig-card .q { font-family: var(--font-display); font-size: 21px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; }
+.orig-card ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: c; }
+.orig-card li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; font-size: 14.5px; counter-increment: c; }
+.orig-card li::before { content: counter(c); width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--paper-ink); display: grid; place-items: center; font-family: var(--font-mono); font-size: 12px; }
+.orig-card li span { color: #5b574b; display: block; font-size: 13.5px; }
+.thennow { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.thennow table { min-width: 520px; font-size: 14.5px; }
+.thennow td:first-child { color: var(--muted); font-size: 13.5px; white-space: nowrap; }
+.thennow td:last-child { font-weight: 600; }
+.thennow tfoot td { background: var(--accent-soft); color: var(--fg); font-weight: 500 !important; white-space: normal !important; font-size: 14.5px !important; }
+.thennow tfoot b { color: var(--accent); }
+
+/* ---------- Swap lineage ---------- */
+.ind-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+@media (max-width: 760px) { .ind-grid { grid-template-columns: 1fr; } }
+.ind-grid h5 { margin: 0 0 6px; font-size: 13px; font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.ind-list { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.ind-list div { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 10px; }
+.ind-list b { font-size: 13.5px; }
+.ind-list span { color: var(--muted); }
+.lanes-wrap { overflow-x: auto; }
+.lanes { display: flex; flex-direction: column; gap: 18px; min-width: 680px; }
+.lane-h { display: flex; align-items: baseline; gap: 10px; font-size: 15px; }
+.lane-h span { font-size: 13px; color: var(--muted); }
+.lrow { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); position: relative; }
+.lrow::before { content: ""; position: absolute; left: 7%; right: 7%; top: 39px; height: 2px; background: var(--line); }
+.lstep { display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; text-align: center; }
+.lstep .sc { height: 20px; font-family: var(--font-mono); font-size: 11px; color: var(--info); }
+.lstep .sc b { background: var(--info-soft); border-radius: 999px; padding: 2px 8px; font-weight: 600; }
+.tok { position: relative; z-index: 1; font-size: 12.5px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); white-space: nowrap; }
+.tok.own { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.lstep .nt { font-size: 11px; color: var(--muted); height: 14px; }
+.evt { font-size: 11.5px; font-weight: 600; line-height: 1.3; border-radius: 8px; padding: 4px 7px; max-width: 112px; }
+.evt.offer { border: 1.5px dashed var(--accent); color: var(--accent); }
+.evt.yes { background: var(--accent-soft); color: var(--accent); }
+.evt.no { background: var(--surface-2); color: var(--muted); }
+.evt.keep { background: var(--accent); color: var(--accent-ink); }
+.evt.stop { background: var(--fg); color: var(--bg); }
+
+/* ---------- Problem / Idea ---------- */
+.three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 860px) { .three { grid-template-columns: 1fr; } }
+.pain { padding: 26px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.pain .q { font-family: var(--font-display); font-size: 22px; font-weight: 700; line-height: 1.2; }
+.pain p { color: var(--muted); font-size: 15px; }
+.pain .tag { font-family: var(--font-mono); font-size: 11px; color: var(--warn); letter-spacing: 0.06em; text-transform: uppercase; }
+
+.idea { margin-top: 64px; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 48px; align-items: start; }
+@media (max-width: 860px) { .idea { grid-template-columns: 1fr; gap: 28px; } }
+.idea-statement { font-family: var(--font-display); font-size: clamp(26px, 3.3vw, 36px); font-weight: 700; line-height: 1.18; letter-spacing: -0.02em; }
+.idea-statement mark { background: linear-gradient(transparent 62%, var(--accent-soft) 62%); color: inherit; }
+.pillars { display: flex; flex-direction: column; }
+.pillar { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding: 18px 0; border-top: 1px solid var(--line); }
+.pillar:last-child { border-bottom: 1px solid var(--line); }
+.pillar .ic { width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+.pillar .ic svg { width: 22px; height: 22px; }
+.pillar h3 { font-size: 19px; margin-bottom: 4px; }
+.pillar p { color: var(--muted); font-size: 15px; }
+
+/* ---------- Prototype ---------- */
+.proto { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 56px; align-items: start; }
+@media (max-width: 900px) { .proto { grid-template-columns: 1fr; justify-items: center; gap: 36px; } }
+.phone { width: 330px; max-width: 100%; height: 690px; border: 10px solid var(--bezel); border-radius: 48px; background: var(--surface); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 30px 60px -28px var(--shadow); position: relative; }
+.p-status { display: flex; justify-content: space-between; align-items: center; padding: 10px 22px 4px; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.p-notch { width: 84px; height: 22px; border-radius: 12px; background: var(--bezel); }
+.p-bat { width: 22px; height: 10px; border: 1.5px solid var(--fg); border-radius: 3px; position: relative; }
+.p-bat::after { content: ""; position: absolute; inset: 1.5px 5px 1.5px 1.5px; background: var(--fg); border-radius: 1px; }
+.p-body { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 16px 16px; font-size: 13px; line-height: 1.42; scrollbar-width: thin; }
+.screen { display: flex; flex-direction: column; gap: 12px; }
+.screen[hidden] { display: none !important; }
+.s-title { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.s-sub { font-size: 12px; color: var(--muted); margin-top: -8px; }
+.p-tabs { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--line); padding: 6px 4px 10px; flex-shrink: 0; background: var(--surface); }
+.p-tab { background: none; border: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 500; color: var(--muted); padding: 6px 0; cursor: pointer; border-radius: 10px; }
+.p-tab svg { width: 20px; height: 20px; }
+.p-tab[aria-selected="true"] { color: var(--accent); }
+.p-tab[aria-selected="true"] svg { stroke-width: 2.3; }
+
+.hcard { background: var(--accent); color: var(--accent-ink); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+.hcard .k { font-size: 11.5px; opacity: 0.9; }
+.hcard .big { font-family: var(--font-display); font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+.hcard .row2 { display: flex; justify-content: space-between; font-size: 12px; margin-top: 6px; padding-top: 8px; border-top: 1px solid color-mix(in srgb, var(--accent-ink) 30%, transparent); }
+.pcard { background: var(--surface-2); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.pcard h5 { margin: 0; font-size: 13px; font-family: var(--font-body); font-weight: 700; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pcard .note { font-size: 11.5px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 11.5px; padding: 4px 9px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.chip.due { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.linkish { background: none; border: 0; color: var(--accent); font-weight: 700; font-size: 12px; padding: 0; cursor: pointer; }
+.check-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 600; color: var(--accent); font-family: var(--font-mono); }
+.check-badge svg { width: 12px; height: 12px; }
+
+.grp-h { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+.item { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.item:last-child { border-bottom: 0; }
+.item input { appearance: none; width: 20px; height: 20px; border: 1.8px solid var(--line); border-radius: 6px; margin: 1px 0 0; cursor: pointer; display: grid; place-items: center; background: var(--surface); }
+.item input:checked { background: var(--accent); border-color: var(--accent); }
+.item input:checked::after { content: ""; width: 9px; height: 5px; border: 2px solid var(--accent-ink); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.item.done .nm { text-decoration: line-through; color: var(--muted); }
+.item .nm { font-weight: 700; font-size: 13px; }
+.item .prod { font-size: 12px; }
+.item .why { font-size: 11px; color: var(--muted); }
+.item .right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.item .px { font-family: var(--font-mono); font-size: 12.5px; font-weight: 600; }
+.item .unit { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
+.swap { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 7px; background: var(--accent-soft); margin: 4px 0 6px; }
+.swap .sw-t { font-size: 11.5px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; font-family: var(--font-mono); }
+.swap .sw-b { display: flex; gap: 8px; }
+.swap button { flex: 1; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 6px 8px; cursor: pointer; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); }
+.swap button.primary { background: var(--accent); color: var(--accent-ink); }
+.maybe { opacity: 0.85; }
+.list-foot { position: sticky; bottom: -16px; background: var(--surface); border-top: 1px solid var(--line); margin: 0 -16px -16px; padding: 10px 16px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+.list-foot b { font-family: var(--font-display); font-size: 18px; }
+
+.persona { border-radius: 16px; padding: 14px; background: var(--info-soft); display: flex; flex-direction: column; gap: 4px; }
+.persona .k { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--info); }
+.persona .v { font-family: var(--font-display); font-size: 22px; font-weight: 800; }
+.persona p { font-size: 12px; color: var(--muted); }
+.trait { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.trait:last-child { border-bottom: 0; }
+.trait .t { font-weight: 700; font-size: 12.5px; }
+.trait .n { font-family: var(--font-mono); font-size: 12.5px; font-weight: 600; color: var(--accent); }
+.trait .d { grid-column: 1 / -1; font-size: 11px; color: var(--muted); }
+.meter { height: 8px; border-radius: 99px; background: var(--surface); overflow: hidden; position: relative; }
+.meter i { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 99px; }
+.meter b { position: absolute; top: -3px; width: 2px; height: 14px; background: var(--fg); }
+
+.bars { display: flex; flex-direction: column; gap: 7px; }
+.bar { display: grid; grid-template-columns: 92px minmax(0, 1fr) 34px; gap: 8px; align-items: center; font-size: 11.5px; }
+.bar .track { height: 10px; background: var(--surface); border-radius: 99px; overflow: hidden; }
+.bar .track i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.bar.snack .track i { background: var(--warn); }
+.bar .pc { font-family: var(--font-mono); text-align: right; font-size: 11px; }
+.stack { display: flex; height: 16px; border-radius: 99px; overflow: hidden; gap: 2px; }
+.stack i { display: block; height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend span::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: var(--c); }
+
+.chat { display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 88%; padding: 9px 12px; border-radius: 14px; font-size: 12.5px; }
+.msg.me { align-self: flex-end; background: var(--accent); color: var(--accent-ink); border-bottom-right-radius: 4px; }
+.msg.bot { align-self: flex-start; background: var(--surface-2); border-bottom-left-radius: 4px; display: flex; flex-direction: column; gap: 6px; }
+.msg.bot .tools { font-family: var(--font-mono); font-size: 10px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 5px; display: flex; flex-direction: column; gap: 2px; }
+.msg.bot.refuse { background: var(--warn-soft); }
+.typing { display: inline-flex; gap: 4px; padding: 4px 0; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+.qchips { display: flex; flex-direction: column; gap: 6px; }
+.qchip { text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 8px 10px; font-size: 12px; cursor: pointer; }
+.qchip:hover, .qchip:focus-visible { border-color: var(--accent); }
+.qchip[disabled] { opacity: .45; cursor: default; }
+
+/* Narration rail */
+.rail { display: flex; flex-direction: column; gap: 22px; min-width: 0; width: 100%; padding-top: 8px; }
+.steps { display: flex; flex-wrap: wrap; gap: 8px; }
+.step-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); cursor: pointer; font-size: 14px; font-weight: 500; }
+.step-btn .num { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.step-btn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.step-btn[aria-pressed="true"] .num { color: var(--accent); }
+.narr { display: flex; flex-direction: column; gap: 16px; }
+.narr h3 { font-size: clamp(26px, 3vw, 34px); font-weight: 800; }
+.narr .say { font-size: 18px; color: var(--muted); max-width: 58ch; }
+.notice { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line); }
+.notice li { list-style: none; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15.5px; }
+.notice li::before { content: attr(data-n); font-family: var(--font-mono); font-size: 12px; color: var(--accent); padding-top: 3px; }
+.notice ul { margin: 0; padding: 0; }
+.status-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.03em; padding: 4px 10px; border-radius: 999px; font-weight: 500; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.built { color: var(--accent); background: var(--accent-soft); }
+.pill.part { color: var(--info); background: var(--info-soft); }
+.pill.vision { color: var(--warn); background: var(--warn-soft); }
+.rail-nav { display: flex; gap: 10px; align-items: center; }
+.rail-nav .hint { font-size: 12.5px; color: var(--muted); margin-left: auto; }
+kbd { font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--surface); }
+@media (max-width: 900px) { .rail { max-width: 640px; } .rail-nav .hint { display: none; } }
+
+/* ---------- Premise study ---------- */
+.illus { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--warn); border: 1px dashed currentColor; border-radius: 6px; padding: 5px 10px; margin-bottom: 24px; }
+.figs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+.figs .wide { grid-column: 1 / -1; }
+@media (max-width: 860px) { .figs { grid-template-columns: 1fr; } }
+.fig { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.fig .fh { display: flex; flex-direction: column; gap: 4px; }
+.fig h3 { font-size: 19px; }
+.fig .cap { font-size: 14px; color: var(--muted); max-width: 70ch; }
+.fig .read { font-size: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.fig .read b { color: var(--accent); }
+.svgwrap { overflow-x: auto; }
+.svgwrap svg { display: block; width: 100%; min-width: 600px; height: auto; }
+.rhythm text { font-family: var(--font-body); }
+.rhythm .lbl { font-size: 14px; font-weight: 700; fill: var(--fg); }
+.rhythm .cls { font-size: 12px; fill: var(--muted); }
+.rhythm .ax { font-size: 11px; fill: var(--muted); font-family: var(--font-mono); }
+.rhythm .base { stroke: var(--line); stroke-width: 1; }
+.rhythm .grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 4; }
+.rhythm circle { stroke: var(--surface); stroke-width: 2; cursor: default; }
+.rhythm circle:hover { r: 7; }
+.hbars { display: flex; flex-direction: column; gap: 10px; }
+.hbar { display: grid; grid-template-columns: minmax(110px, 0.9fr) minmax(0, 2fr) 44px; gap: 12px; align-items: center; font-size: 14px; border-radius: 6px; }
+.hbar .tr { height: 14px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.hbar .tr i { display: block; height: 100%; background: var(--accent); border-radius: 0 4px 4px 0; }
+.hbar .tr i.dim { background: color-mix(in srgb, var(--accent) 45%, var(--surface-2)); }
+.hbar .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; }
+.hbar.big { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.hbar.big .row { display: flex; justify-content: space-between; gap: 12px; }
+.hbar.big .tr { height: 22px; }
+.hbar.big .v { font-size: 15px; font-weight: 600; }
+.hbar .why { font-size: 12.5px; color: var(--muted); }
+.legend2 { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted); }
+.legend2 span { display: inline-flex; align-items: center; gap: 6px; }
+.legend2 span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.method { margin-top: 48px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--fg); }
+@media (max-width: 960px) { .method { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .method { grid-template-columns: 1fr; } }
+.method > div { padding: 18px 22px 0 0; display: flex; flex-direction: column; gap: 6px; }
+.method .n { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+.method h4 { font-size: 17px; }
+.method p { font-size: 14px; color: var(--muted); }
+.method .tech { font-family: var(--font-mono); font-size: 11.5px; color: var(--info); }
+.hyp { margin-top: 40px; }
+.hyp td:last-child { color: var(--muted); }
+.hyp .exp { font-family: var(--font-mono); font-weight: 600; color: var(--accent); white-space: nowrap; }
+details.numbers { font-size: 14px; }
+details.numbers summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+details.numbers table { min-width: 0; margin-top: 10px; font-size: 13.5px; }
+details.numbers td, details.numbers th { padding: 6px 10px; }
+.fexplorer { display: grid; grid-template-columns: 272px minmax(0, 1fr); gap: 18px; align-items: start; margin-bottom: 40px; scroll-margin-top: 4px; }
+.stages { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (max-width: 1000px) { .fexplorer { grid-template-columns: 1fr; } .stages { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .stages { grid-template-columns: 1fr; } }
+.stage { font: inherit; color: inherit; text-align: left; cursor: pointer; background: var(--surface-2); border: 1.5px solid var(--line); border-radius: 14px; padding: 13px 15px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; position: relative; transition: background .15s, border-color .15s; }
+.stage:hover { border-color: var(--accent); }
+.stage[aria-selected="true"] { background: var(--surface); border: 2px solid var(--accent); box-shadow: 0 14px 30px -20px var(--shadow); }
+.stage[aria-selected="true"]::after { content: ""; position: absolute; top: 50%; right: -9px; width: 14px; height: 14px; background: var(--surface); border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: translateY(-50%) rotate(-45deg); }
+@media (max-width: 1000px) { .stage[aria-selected="true"]::after { display: none; } }
+.stage .n { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+.stage h4 { font-size: 16px; }
+.stage p { font-size: 13px; color: var(--muted); }
+.stage .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.stage .more { display: none; }
+.tchip { font-family: var(--font-mono); font-size: 11px; padding: 3px 9px; border-radius: 999px; }
+.tchip.rules { color: var(--info); background: var(--info-soft); }
+.tchip.ml { color: var(--accent); background: var(--accent-soft); }
+.tchip.exp { color: var(--warn); background: var(--warn-soft); }
+.fpanel { margin: 0; background: var(--surface); border: 2px solid var(--accent); border-radius: 20px; padding: 18px 22px 20px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 16px; min-width: 0; }
+.fpanel > .cohort, .fpanel > .rmo { grid-column: 1 / -1; }
+.fpanel > .fp-nav { grid-column: 2; grid-row: 1; align-self: start; }
+@media (max-width: 640px) { .fpanel > .fp-nav { grid-column: 1 / -1; grid-row: auto; } }
+.fp-head { display: flex; flex-direction: column; gap: 6px; }
+.fp-head h3 { font-size: clamp(20px, 2.2vw, 24px); }
+.fp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.rmo { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.45fr) minmax(0, 0.9fr); gap: 0; }
+@media (max-width: 860px) { .rmo { grid-template-columns: 1fr; } }
+.rmo > div { padding: 0 22px; border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.rmo > div:first-child { padding-left: 0; border-left: 0; }
+@media (max-width: 860px) { .rmo > div { padding: 16px 0 0; border-left: 0; border-top: 1px solid var(--line); } .rmo > div:first-child { padding-top: 0; border-top: 0; } }
+.rmo .k { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+.rmo .k i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); display: grid; place-items: center; font-size: 11px; }
+.rmo p, .rmo li { font-size: 14px; line-height: 1.5; }
+.rmo ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+.rmo .ev { font-size: 12.5px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 10px; margin-top: auto; }
+.stage .cnt { font-family: var(--font-mono); font-size: 11.5px; color: var(--fg); }
+.stage .cnt b { color: var(--accent); }
+.cohort { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 26px; background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; }
+@media (max-width: 860px) { .cohort { grid-template-columns: 1fr; gap: 24px; } }
+.cohort .ch { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; }
+.flevels { display: flex; flex-direction: column; gap: 3px; }
+.flevel { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 12px; align-items: center; background: none; border: 0; font: inherit; color: inherit; text-align: left; padding: 2px 0; border-radius: 6px; }
+button.flevel { cursor: pointer; }
+button.flevel:hover .fl b { color: var(--accent); }
+.flevel .fb { height: 24px; display: flex; justify-content: center; }
+.flevel .fb i { height: 100%; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 12.5px; font-weight: 700; font-style: normal; transition: background .25s, color .25s; }
+.flevel.done .fb i { background: var(--info); color: var(--bg); }
+.flevel.cur .fb i { background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 0 4px var(--accent-soft); }
+.flevel.todo .fb i { background: transparent; border: 1.5px dashed var(--line); color: var(--muted); }
+.flevel .fl { font-size: 13px; line-height: 1.3; }
+.flevel .fl b { display: block; font-size: 13.5px; }
+.flevel .fl span { color: var(--muted); font-size: 12px; }
+.flevel.todo .fl { opacity: 0.6; }
+.zoom { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.zoom h4 { font-size: 15.5px; }
+.zbar { display: flex; gap: 2px; height: 30px; }
+.zbar i { display: flex; align-items: center; justify-content: center; border-radius: 5px; font-family: var(--font-mono); font-size: 13px; font-weight: 700; font-style: normal; min-width: 0; overflow: hidden; transform-origin: left; animation: zgrow .5s ease-out both; }
+.zbar i:nth-child(2) { animation-delay: .08s; } .zbar i:nth-child(3) { animation-delay: .16s; }
+@keyframes zgrow { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+.zlist { display: flex; flex-direction: column; }
+.zrow { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 5px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.zrow::before { content: ""; width: 12px; height: 12px; border-radius: 3px; background: var(--c); border: 1.5px solid var(--b, transparent); transform: translateY(1px); }
+.zrow b { display: block; }
+.zrow span { color: var(--muted); font-size: 12.5px; }
+.zrow .zc { font-family: var(--font-mono); font-size: 12.5px; color: var(--fg); white-space: nowrap; }
+.znote { font-size: 13.5px; color: var(--fg); background: var(--accent-soft); border-radius: 10px; padding: 7px 11px; }
+.fp-nav { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.fp-nav .btn { padding: 7px 14px; font-size: 13.5px; }
+.stage-tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--info); }
+.funnel { display: flex; flex-direction: column; gap: 12px; }
+.frow { display: grid; grid-template-columns: minmax(150px, 0.75fr) minmax(0, 2.25fr); gap: 16px; align-items: center; font-size: 14px; }
+.frow .fl b { display: block; }
+.frow .fl span { font-size: 12.5px; color: var(--muted); }
+.fbar { display: flex; gap: 2px; height: 30px; }
+.fbar i { display: flex; align-items: center; justify-content: center; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; font-style: normal; font-weight: 600; min-width: 0; overflow: hidden; white-space: nowrap; }
+@media (max-width: 640px) { .frow { grid-template-columns: 1fr; gap: 6px; } }
+.tiers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 8px; }
+@media (max-width: 860px) { .tiers { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 460px) { .tiers { grid-template-columns: 1fr; } }
+.tier { border-top: 4px solid var(--c); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.tier .th { display: flex; justify-content: space-between; gap: 8px; font-weight: 700; font-size: 15px; }
+.tier .th .mono { font-weight: 600; }
+.tier p { font-size: 13.5px; color: var(--muted); }
+.rng { display: flex; flex-direction: column; gap: 10px; }
+.rrow { display: grid; grid-template-columns: 118px minmax(0, 1fr) 96px; gap: 12px; align-items: center; font-size: 14px; }
+.rrow .tr { position: relative; height: 14px; background: var(--surface-2); border-radius: 4px; }
+.rrow .tr i { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.rrow .v { font-family: var(--font-mono); font-size: 12px; text-align: right; color: var(--muted); white-space: nowrap; }
+.rrow.axis .tr { background: none; height: 16px; }
+.rrow.axis .tr span { position: absolute; transform: translateX(-50%); font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+.ptable { overflow-x: auto; }
+.ptable table { min-width: 460px; font-size: 13.5px; }
+.ptable td, .ptable th { padding: 9px 12px; }
+.ptable td:first-child { color: var(--muted); white-space: nowrap; }
+.ptable tr.act td { background: var(--accent-soft); color: var(--fg); font-weight: 600; }
+.tip { position: fixed; z-index: 40; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 12.5px; padding: 6px 10px; border-radius: 8px; max-width: 240px; box-shadow: 0 8px 20px -8px var(--shadow); }
+
+/* ---------- Impact ---------- */
+.seg { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--accent); box-shadow: 0 2px 8px -4px var(--shadow); }
+.impact { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr); gap: 28px; align-items: start; margin-top: 24px; }
+@media (max-width: 960px) { .impact { grid-template-columns: 1fr; } }
+.verdict { background: var(--accent); color: var(--accent-ink); border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+.verdict .k { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+.verdict .big { font-family: var(--font-display); font-size: clamp(52px, 7vw, 76px); font-weight: 800; letter-spacing: -0.03em; line-height: 0.95; font-variant-numeric: tabular-nums; }
+.verdict .pct { font-size: 18px; font-weight: 500; }
+.verdict .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: color-mix(in srgb, var(--accent-ink) 25%, transparent); border-radius: 14px; overflow: hidden; }
+.verdict .split div { background: var(--accent); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.verdict .split span { font-size: 12px; opacity: 0.85; }
+.verdict .split b { font-family: var(--font-mono); font-size: 19px; font-variant-numeric: tabular-nums; }
+.verdict .annual { font-size: 14px; border-top: 1px solid color-mix(in srgb, var(--accent-ink) 30%, transparent); padding-top: 12px; }
+.verdict .annual b { font-family: var(--font-mono); }
+.verdict .annual small { display: block; opacity: 0.8; font-size: 12px; margin-top: 2px; }
+.basis { font-size: 14px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.basis b { color: var(--fg); }
+.cmp { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); overflow-x: auto; }
+.cmp table { min-width: 560px; font-size: 14px; }
+.cmp td, .cmp th { padding: 11px 16px; }
+.cmp td.num, .cmp th.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cmp td .sub { display: block; font-size: 12.5px; }
+.cmp .diff-pos { color: var(--accent); font-weight: 600; }
+.cmp .diff-zero { color: var(--muted); }
+.cmp .how { display: inline-block; font-family: var(--font-mono); font-size: 10.5px; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 8px; margin-top: 3px; }
+.cmp tfoot td { font-weight: 700; background: var(--surface-2); border-bottom: 0; }
+.cmp tfoot td.num { font-size: 15.5px; }
+.prove { margin-top: 48px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--fg); }
+@media (max-width: 860px) { .prove { grid-template-columns: 1fr; } }
+.prove > div { padding: 20px 24px 0 0; display: flex; flex-direction: column; gap: 6px; }
+.prove .when { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent); letter-spacing: 0.04em; }
+.prove h4 { font-size: 19px; }
+.prove p { font-size: 14.5px; color: var(--muted); }
+.prove-h { margin-top: 56px; font-size: 22px; }
+
+/* ---------- Architecture ---------- */
+.arch { display: grid; grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr) 48px minmax(0, 1.1fr); align-items: stretch; }
+.lane { border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.lane.src { background: var(--surface-2); }
+.lane.cloud { background: var(--info-soft); }
+.lane.device { background: var(--accent-soft); border: 2px solid var(--accent); }
+.lane .lh { display: flex; flex-direction: column; gap: 2px; }
+.lane .lh .eyebrow { color: var(--muted); }
+.lane.cloud .lh .eyebrow { color: var(--info); }
+.lane.device .lh .eyebrow { color: var(--accent); }
+.lane h3 { font-size: 20px; }
+.node { background: var(--surface); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--line); }
+.node b { font-size: 14px; }
+.node span { font-size: 12.5px; color: var(--muted); }
+.node.personal { border: 1.5px solid var(--accent); }
+.node .aws { font-family: var(--font-mono); font-size: 11px; color: var(--info); }
+.conn { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; color: var(--muted); }
+.conn svg { width: 40px; height: 20px; }
+.conn small { font-family: var(--font-mono); font-size: 10px; writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.06em; text-transform: uppercase; }
+.engines { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.engines .node { padding: 8px 10px; }
+.engines .node b { font-size: 13px; }
+.engines .node span { font-size: 11.5px; }
+.gate { background: var(--accent); color: var(--accent-ink); border-radius: 12px; padding: 10px 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.gate svg { width: 18px; height: 18px; flex-shrink: 0; }
+.personal-path { margin-top: 16px; display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; border: 1.5px dashed var(--accent); font-size: 14.5px; }
+.personal-path svg { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; }
+@media (max-width: 1000px) {
+  .arch { grid-template-columns: 1fr; }
+  .conn { flex-direction: row; padding: 8px 0; }
+  .conn svg { transform: rotate(90deg); }
+  .conn small { writing-mode: horizontal-tb; transform: none; }
+}
+.principles { margin-top: 40px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+.principles div { padding: 20px 20px 0 0; display: flex; flex-direction: column; gap: 6px; }
+.principles h4 { font-size: 17px; }
+.principles p { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 860px) { .principles { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .principles { grid-template-columns: 1fr; } }
+
+/* ---------- Why on the phone ---------- */
+.onphone { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr); gap: 40px; align-items: start; }
+@media (max-width: 960px) { .onphone { grid-template-columns: 1fr; gap: 24px; } }
+.onphone .lead { display: flex; flex-direction: column; gap: 14px; }
+.onphone .lead h3 { font-size: clamp(24px, 2.8vw, 32px); font-weight: 800; }
+.onphone .lead p { color: var(--muted); font-size: 16px; }
+.split2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.split2 div { background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 3px; }
+.split2 .k { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+.split2 div:first-child .k { color: var(--info); }
+.split2 div:last-child .k { color: var(--accent); }
+.split2 b { font-size: 14.5px; }
+.split2 span:last-child { font-size: 13px; color: var(--muted); }
+.reasons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 620px) { .reasons { grid-template-columns: 1fr; } }
+.reason { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; }
+.reason .ic { width: 34px; height: 34px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+.reason .ic svg { width: 18px; height: 18px; }
+.reason h4 { font-size: 16px; margin-bottom: 3px; }
+.reason p { font-size: 14px; color: var(--muted); }
+.pushback { grid-column: 1 / -1; border: 1.5px dashed var(--accent); border-radius: 16px; padding: 14px 18px; font-size: 14.5px; background: var(--accent-soft); }
+.pushback b { color: var(--accent); }
+
+/* ---------- Why us ---------- */
+.why-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 860px) { .why-grid { grid-template-columns: 1fr; } }
+.why-col { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 4px; }
+.why-col h3 { font-size: 22px; margin-bottom: 10px; }
+.why-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3px; padding: 14px 0; border-top: 1px solid var(--line); }
+.why-item b { font-size: 15.5px; }
+.why-item span { font-size: 14.5px; color: var(--muted); }
+.why-item .measure { font-family: var(--font-mono); font-size: 11.5px; color: var(--info); }
+
+/* ---------- Gaps ---------- */
+.gap-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; align-items: center; font-size: 14px; color: var(--muted); }
+.gaps { display: flex; flex-direction: column; gap: 14px; }
+.gap { display: grid; grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1.25fr); background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.gap-l, .gap-r { padding: 22px 24px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.gap-l { background: var(--warn-soft); }
+.gap-l .k, .gap-r .k { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+.gap-l .k { color: var(--warn); }
+.gap-r .k { color: var(--accent); }
+.gap h3 { font-size: 19px; }
+.gap p { font-size: 14.5px; color: var(--muted); }
+.gap-r p { color: var(--fg); }
+.gap-r ul { margin: 0; padding-left: 18px; font-size: 14.5px; display: flex; flex-direction: column; gap: 4px; }
+.gap-mid { display: grid; place-items: center; background: linear-gradient(90deg, var(--warn-soft) 50%, var(--surface) 50%); color: var(--accent); }
+.gap-mid svg { width: 24px; height: 24px; background: var(--surface); border-radius: 50%; border: 1.5px solid var(--line); padding: 3px; }
+.gap-r .status-row { margin-top: 4px; }
+@media (max-width: 820px) {
+  .gap { grid-template-columns: 1fr; }
+  .gap-mid { height: 28px; background: linear-gradient(180deg, var(--warn-soft) 50%, var(--surface) 50%); }
+  .gap-mid svg { transform: rotate(90deg); }
+}
+
+/* ---------- Roadmap ---------- */
+.road { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; position: relative; }
+.road::before { content: ""; position: absolute; left: 0; right: 0; top: 15px; height: 2px; background: var(--line); }
+.phase { position: relative; padding: 44px 18px 0 0; display: flex; flex-direction: column; gap: 8px; }
+.phase .dot { position: absolute; top: 6px; left: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); border: 2.5px solid var(--line); }
+.phase.done .dot { background: var(--accent); border-color: var(--accent); }
+.phase.next .dot { border-color: var(--accent); box-shadow: 0 0 0 5px var(--accent-soft); }
+.phase .when { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); letter-spacing: 0.04em; }
+.phase h3 { font-size: 19px; }
+.phase p { font-size: 14px; color: var(--muted); }
+.phase .exit { font-size: 13px; border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 4px; }
+.phase .exit b { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); display: block; }
+@media (max-width: 960px) {
+  .road { grid-template-columns: 1fr; }
+  .road::before { left: 9px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; }
+  .phase { padding: 0 0 28px 40px; }
+  .phase .dot { top: 2px; }
+}
+.metrics { margin-top: 56px; overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14.5px; }
+th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; background: var(--surface-2); }
+tr:last-child td { border-bottom: 0; }
+td b { display: block; }
+td .sub { color: var(--muted); font-size: 13.5px; }
+
+/* ---------- Ask ---------- */
+.ask { background: var(--fg); color: var(--bg); border-radius: 28px; padding: clamp(28px, 5vw, 56px); display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 48px; }
+@media (max-width: 860px) { .ask { grid-template-columns: 1fr; gap: 28px; } }
+.ask h2 { font-size: clamp(32px, 4.4vw, 50px); font-weight: 800; }
+.ask .eyebrow { color: var(--accent-soft); }
+.ask .intro { display: flex; flex-direction: column; gap: 16px; }
+.ask .intro p { opacity: 0.8; font-size: 17px; }
+.asks { display: flex; flex-direction: column; }
+.ask-item { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-top: 1px solid color-mix(in srgb, var(--bg) 22%, transparent); }
+.ask-item:last-child { border-bottom: 1px solid color-mix(in srgb, var(--bg) 22%, transparent); }
+.ask-item .n { font-family: var(--font-display); font-size: 28px; font-weight: 800; color: var(--accent-soft); line-height: 1; }
+.ask-item b { font-size: 17px; display: block; margin-bottom: 3px; }
+.ask-item span { opacity: 0.78; font-size: 14.5px; }
+footer { padding-block: 36px 56px; color: var(--muted); font-size: 13px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+</style>
+
+<header class="topbar gutter">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="NeedSmart, back to top">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg></span>
+      NeedSmart
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#origin">Origin</a>
+      <a href="#problem">Problem</a>
+      <a href="#premise">Premise</a>
+      <a href="#prototype">Prototype</a>
+      <a href="#impact">Impact</a>
+      <a href="#how">How it works</a>
+      <a href="#why">Why us</a>
+      <a href="#gaps">Gaps &amp; fixes</a>
+      <a href="#plan">Plan</a>
+      <a href="#ask">The ask</a>
+    </nav>
+    <span class="stamp">Vision · synthetic data</span>
+    <a class="tryme" href="app.html">Try me<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ===================== HERO ===================== -->
+  <section class="hero gutter" aria-labelledby="h-hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="eyebrow">Product vision for review</span>
+        <h1 id="h-hero">Your last receipt writes your <em>next list.</em></h1>
+        <p class="lede">NeedSmart is a shopping assistant inside our app. It reads the eReceipts members already get, predicts what the household will need this week, finds the best-value way to buy it in our range, and shows what they really saved.</p>
+        <div class="cta-row">
+          <a class="btn solid" href="#prototype">Walk the prototype
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          <a class="btn" href="app.html">Try me: the full app</a>
+        </div>
+        <div class="hero-meta">
+          <span>Working prototype exists</span>
+          <span>All screens use a synthetic household</span>
+          <span>Zero new data capture</span>
+        </div>
+      </div>
+
+      <div class="transform" aria-label="Illustration: a receipt becomes a shopping list">
+        <div class="receipt" aria-hidden="true">
+          <div class="r-head">eRECEIPT · SAT 14 NOV</div>
+          <div class="r-line"><span>GREEK YOGHURT 1KG</span><span>7.20</span></div>
+          <div class="r-line"><span>WHOLEMEAL 700G</span><span>4.50</span></div>
+          <div class="r-line"><span>COFFEE BEANS 1KG</span><span>27.00</span></div>
+          <div class="r-line"><span>BANANAS 1.18KG</span><span>4.60</span></div>
+          <div class="r-line"><span>FULL CREAM MILK 3L</span><span>4.65</span></div>
+          <div class="r-line"><span>CHICKEN BREAST 1KG</span><span>13.00</span></div>
+          <div class="r-line"><span>SPAGHETTI 500G</span><span>2.00</span></div>
+          <div class="r-line"><span>FREE RANGE EGGS 12</span><span>6.50</span></div>
+          <div class="r-line r-total"><span>TOTAL</span><span>69.45</span></div>
+          <div class="r-foot">+ 37 earlier receipts</div>
+        </div>
+        <div class="arrow-col" aria-hidden="true">
+          <svg viewBox="0 0 44 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h38M31 4l9 8-9 8"/></svg>
+          learns
+        </div>
+        <div class="listcard" aria-hidden="true">
+          <h4>Next shop · Thu 26 Nov</h4>
+          <div class="lc-sub">Predicted from your own buying rhythm</div>
+          <div class="lc-row"><span class="tick"></span><span>Coffee beans<span class="why">Due in 5 days · on special now</span></span><span class="px">22.00 <span class="save">−5.00</span></span></div>
+          <div class="lc-row"><span class="tick"></span><span>Greek yoghurt<span class="why">Swap to own brand, same size</span></span><span class="px">5.00 <span class="save">−2.20</span></span></div>
+          <div class="lc-row"><span class="tick"></span><span>Chicken breast<span class="why">Every 8 days, like clockwork</span></span><span class="px">11.00 <span class="save">−2.00</span></span></div>
+          <div class="lc-row"><span class="tick"></span><span>Milk, bread, eggs +2<span class="why">Your weekly staples</span></span><span class="px">22.63 <span class="save">−1.70</span></span></div>
+          <div class="lc-total"><span>Saving vs what you usually pay</span><b class="mono">$10.90</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ORIGIN ===================== -->
+  <section class="block gutter" id="origin" aria-labelledby="h-origin">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Where this started</span>
+        <h2 id="h-origin">It began as my own side project, with one simple idea.</h2>
+        <p>Before the business was interested, NeedSmart was a tool for my own household. The extra layers on this page, like cohorts, models and privacy design, came later. The core is still the simple idea.</p>
+      </div>
+      <div class="origin">
+        <div class="orig-card">
+          <span class="k">The original idea · my indie project</span>
+          <p class="q">A need-based alert. Every week it scanned the specials at Coles and Woolworths, matched them to what my household was predicted to need, and turned that into a smart grocery plan.</p>
+          <ol>
+            <li><div><b>Predict this week's needs</b><span>From my own receipts and our buying rhythm</span></div></li>
+            <li><div><b>Match them to the specials</b><span>Across both supermarkets, every week</span></div></li>
+            <li><div><b>Plan the shop, then learn</b><span>A grocery plan, and a picture of what we actually consume over time</span></div></li>
+          </ol>
+        </div>
+        <div class="thennow">
+          <table>
+            <thead><tr><th></th><th>Then · my side project</th><th>Now · for our members</th></tr></thead>
+            <tbody>
+              <tr><td>Who it serves</td><td>One household: mine</td><td>Millions of members</td></tr>
+              <tr><td>Purchase data</td><td>My own PDF receipts</td><td>De-identified history to learn from; each member's eReceipts for their list</td></tr>
+              <tr><td>Offers</td><td>Specials from two supermarkets</td><td>Our own specials, member prices and own brand</td></tr>
+              <tr><td>Where it runs</td><td>My laptop</td><td>Each member's phone, with shared packs from our cloud</td></tr>
+              <tr><td>Savings measured against</td><td>What I usually pay</td><td>What each household usually pays</td></tr>
+            </tbody>
+            <tfoot><tr><td colspan="3"><b>What hasn't changed:</b> predict the need, find the best way to buy it, and tell the truth about savings.</td></tr></tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROBLEM + IDEA ===================== -->
+  <section class="block gutter" id="problem" aria-labelledby="h-problem">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">The problem</span>
+        <h2 id="h-problem">Members do the same mental maths every week, alone.</h2>
+        <p>Most of a household's shop is a repeat of the last one. Yet every week they rebuild the list from memory, scan thousands of specials, and can't tell whether a "saving" actually saved them anything.</p>
+      </div>
+      <div class="three">
+        <div class="pain">
+          <span class="tag">Remembering</span>
+          <p class="q">"Do we need coffee yet?"</p>
+          <p>Lists are rebuilt from memory. Things get forgotten, triggering a top-up trip, or double-bought and wasted.</p>
+        </div>
+        <div class="pain">
+          <span class="tag">Searching</span>
+          <p class="q">"Which of these specials matter to me?"</p>
+          <p>The catalogue is huge and mostly irrelevant to any one household. Finding the few deals that match what they actually buy is work.</p>
+        </div>
+        <div class="pain">
+          <span class="tag">Trusting</span>
+          <p class="q">"Did I actually save $40?"</p>
+          <p>"Was" prices measure against the shelf, not against what this household normally pays. Members are rightly sceptical.</p>
+        </div>
+      </div>
+
+      <div class="idea">
+        <p class="idea-statement">NeedSmart turns each member's receipt history into <mark>a short, checked, personal list</mark> and tells the truth about savings.</p>
+        <div class="pillars">
+          <div class="pillar">
+            <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <div><h3>Knows what you need, and when</h3><p>Predicts at the need level ("yoghurt"), not the exact barcode, from each household's own purchase rhythm.</p></div>
+          </div>
+          <div class="pillar">
+            <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></span>
+            <div><h3>Finds the best-value way to buy it</h3><p>Matches due needs to this week's specials, multi-buys, pack sizes and own-brand swaps the household is likely to accept.</p></div>
+          </div>
+          <div class="pillar">
+            <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <div><h3>Shows savings you can believe</h3><p>Every figure is recomputed by a number-checker and measured against what this household usually pays, then confirmed from the next receipt.</p></div>
+          </div>
+          <div class="pillar">
+            <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg></span>
+            <div><h3>Answers questions in plain language</h3><p>"Why is milk on my list?" An assistant answers from the member's own data, with the maths done by tools, not guessed.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PREMISE STUDY ===================== -->
+  <section class="block gutter" id="premise" aria-labelledby="h-premise">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Testing the core premise</span>
+        <h2 id="h-premise">Do households really shop in repeating rhythms?</h2>
+        <p>Everything NeedSmart predicts depends on this. If a household buys milk every five days, a reminder on day five is believable. Before we build on it, we'd run a data study on our own eReceipts: four filters, each answering one question. Simple rules come first. Machine learning is used only where it beats them.</p>
+      </div>
+      <div class="fexplorer" id="fexplorer">
+        <div class="stages" role="tablist" aria-label="The four study filters" aria-orientation="vertical" id="stages"></div>
+        <div class="fpanel" role="tabpanel" id="fpanel" aria-live="polite"></div>
+      </div>
+
+      <span class="illus">Illustrative expected output · not yet measured on our data</span>
+
+      <div class="figs">
+        <div class="fig wide">
+          <div class="fh">
+            <span class="stage-tag">Filter 2 · consistency</span>
+            <h3>What a rhythm looks like: one household, 26 weeks</h3>
+            <p class="cap">Each dot is a purchase. The regularity score measures how much the gap between purchases varies (lower is steadier). Hover a dot for the date.</p>
+          </div>
+          <div class="svgwrap"><svg class="rhythm" id="rhythm" viewBox="0 0 720 262" role="img" aria-label="Purchase timelines for four needs over 26 weeks"></svg></div>
+          <div class="legend2">
+            <span style="--c:var(--accent)">Regular · score up to 0.25 · drives "due" reminders</span>
+            <span style="--c:color-mix(in srgb, var(--accent) 45%, var(--surface-2))">Somewhat regular · up to 0.75 · goes to "Maybe"</span>
+            <span style="--c:var(--muted)">Irregular · above 0.75 · never reminded</span>
+          </div>
+        </div>
+
+        <div class="fig">
+          <div class="fh">
+            <span class="stage-tag">Filter 1 · history</span>
+            <h3>How long until a pattern shows?</h3>
+            <p class="cap">For a brand-new member. A first pattern needs 3 purchases (2 cycles); strong evidence needs 7 (6 cycles).</p>
+          </div>
+          <div class="rng" id="ttp"></div>
+          <div class="legend2">
+            <span style="--c:color-mix(in srgb, var(--accent) 45%, var(--surface-2))">First pattern · shown as "Maybe"</span>
+            <span style="--c:var(--accent)">Building to strong evidence</span>
+          </div>
+          <p class="read">Existing members don't wait: <b>their past receipts already hold the pattern</b>, so it's found on day one.</p>
+        </div>
+
+        <div class="fig">
+          <div class="fh">
+            <span class="stage-tag">Filter 2 · consistency</span>
+            <h3>Which needs repeat most?</h3>
+            <p class="cap">Share of households with a regular rhythm for each need.</p>
+          </div>
+          <div class="hbars" id="byneed"></div>
+          <p class="read">Staples are where reminders earn trust first. <b>Long-cycle household items</b> stay in "Maybe" until the household confirms.</p>
+        </div>
+
+        <div class="fig">
+          <div class="fh">
+            <span class="stage-tag">Filter 3 · shared needs</span>
+            <h3>Same receipts, two lenses</h3>
+            <p class="cap">Share of grocery spend that comes back at least 3 times in 26 weeks.</p>
+          </div>
+          <div class="hbars" id="lens"></div>
+          <p class="read">At barcode level most items look like one-offs, because brands and sizes change. Grouped by need, <b>the repeat pattern appears</b>. That's why NeedSmart predicts needs, not products.</p>
+        </div>
+
+        <div class="fig">
+          <div class="fh">
+            <span class="stage-tag">Filter 3 · personal needs</span>
+            <h3>Same need-group, two different households' rules</h3>
+            <p class="cap">Each household gets its own profile for every need, learned from what they've actually bought.</p>
+          </div>
+          <div class="ptable">
+            <table>
+              <thead><tr><th></th><th>Coffee beans</th><th>Greek yoghurt</th></tr></thead>
+              <tbody>
+                <tr><td>Brand habit</td><td>Loyal: one brand, 92% of buys</td><td>Flexible: 4 brands</td></tr>
+                <tr><td>Acceptable set</td><td>Their usual brand, 1kg</td><td>Any Greek 1kg, own brand included</td></tr>
+                <tr><td>On special</td><td>Stocks up, about 2×</td><td>Buys whichever is on special</td></tr>
+                <tr><td>Must match</td><td>Whole beans, not ground</td><td>Greek style, full fat</td></tr>
+                <tr class="act"><td>NeedSmart does</td><td>Reminds on rhythm, flags their brand's specials early, never swaps</td><td>Suggests the cheapest acceptable option, including own brand</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="fig wide">
+          <div class="fh">
+            <span class="stage-tag">Filter 3 · when one need is really two</span>
+            <h3>The Riveras' yoghurt, last 8 weeks</h3>
+            <p class="cap">Two independent rhythms inside one need-group, here kids' pouches and Greek 1kg, blur into one muddled pattern. When we detect that, we split it into two personal needs.</p>
+          </div>
+          <div class="svgwrap"><svg class="rhythm" id="split" viewBox="0 0 720 210" role="img" aria-label="Yoghurt purchases as one need and split into two"></svg></div>
+          <p class="read" id="split-read"></p>
+        </div>
+
+        <div class="fig wide" id="swaps-learn">
+          <div class="fh">
+            <span class="stage-tag">Filter 3 · brand indifference</span>
+            <h3>Swaps that learn: offer when they don't mind, stop when they stick</h3>
+            <p class="cap">For consistent shoppers, we measure whether the brand matters to them within a need. NeedSmart offers a cheaper alternative only where it doesn't, and watches what they do next.</p>
+          </div>
+          <div class="ind-grid">
+            <div>
+              <h5>How we measure indifference</h5>
+              <div class="ind-list">
+                <div><b>Switch rate</b><span>How often the brand changes between buys of the same need</span></div>
+                <div><b>Special-driven</b><span>Do switches follow another brand's special?</span></div>
+                <div><b>Return rate</b><span>After a switch, do they go back to their usual brand?</span></div>
+              </div>
+            </div>
+            <div>
+              <h5>What NeedSmart does with the score (0 to 1)</h5>
+              <div class="ind-list">
+                <div><b>0.6 and above</b><span>Indifferent: offer the cheapest acceptable option</span></div>
+                <div><b>0.3 to 0.6</b><span>Unsure: test one swap, then watch the next buys</span></div>
+                <div><b>Below 0.3</b><span>Loyal: never swap; flag their brand's specials instead</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="lanes-wrap"><div class="lanes" id="lanes"></div></div>
+          <p class="read">Two declined swaps and NeedSmart <b>stops offering for that need</b>. It only tries again if the member switches on their own. Scores are illustrative.</p>
+        </div>
+      </div>
+
+      <details class="numbers" style="margin-top:16px">
+        <summary>View the chart numbers as a table</summary>
+        <div style="overflow-x:auto"><table id="num-table"></table></div>
+      </details>
+
+      <div class="metrics hyp">
+        <table>
+          <thead><tr><th>Hypothesis</th><th>Expected</th><th>How it's measured</th><th>If it doesn't hold</th></tr></thead>
+          <tbody>
+            <tr><td><b>Enough members qualify</b><span class="sub">Filter 1 · healthy history</span></td><td class="exp">≈ half</td><td>Share of active members with 12+ linked receipts in 26 weeks</td><td>Card-scan nudge for the rest; launch with staples first</td></tr>
+            <tr><td><b>Most grocery spend repeats</b><span class="sub">at need level</span></td><td class="exp">≈ 70%+</td><td>Repeat share of spend, 26-week window, eligible households</td><td>NeedSmart leads with deal matching; timing reminders only for proven staples</td></tr>
+            <tr><td><b>Most eligible households are consistent</b><span class="sub">Filter 2 · steady or mixed tier</span></td><td class="exp">≈ 80%</td><td>Household tier from need-level regularity scores, with a drift check</td><td>Deals-first list for more households; reminders only where earned</td></tr>
+            <tr><td><b>Simple rules are a strong start</b><span class="sub">Filter 4 · ML adds lift on short histories</span></td><td class="exp">ML beats rules</td><td>Precision and recall on held-out weeks: model vs rhythm rule vs per-product baseline</td><td>Ship the rules; ML stays in research until it wins</td></tr>
+            <tr><td><b>Rhythms survive specials</b><span class="sub">stock-ups shift, not break, the pattern</span></td><td class="exp">Gap stretches by pack</td><td>Gap after a promo stock-up vs quantity bought</td><td>Pause reminders for a need after a stock-up until the usual gap passes</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROTOTYPE ===================== -->
+  <section class="block gutter" id="prototype" aria-labelledby="h-proto">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">The experience</span>
+        <h2 id="h-proto">Tap through a week with the Rivera household.</h2>
+        <p>A synthetic family of four, 26 weeks of made-up receipts. Everything on the phone is live: tick items, accept or reject a swap, and ask the assistant a question.</p>
+        <p>Want the whole thing? <a href="app.html"><b>Try me</b></a> opens the full app for desktop or phone, with three demo households, their weekly plans, needs, savings and insights.</p>
+      </div>
+
+      <div class="proto">
+        <div class="phone" role="region" aria-label="NeedSmart phone prototype">
+          <div class="p-status"><span class="mono">9:41</span><span class="p-notch" aria-hidden="true"></span><span class="p-bat" aria-hidden="true"></span></div>
+          <div class="p-body" id="pbody">
+
+            <!-- HOME -->
+            <div class="screen" id="scr-home" role="tabpanel" aria-label="Home">
+              <div class="s-title">Morning, Alex</div>
+              <div class="s-sub">Rivera household · 4 people</div>
+              <div class="hcard">
+                <span class="k">Your next shop · Thu 26 Nov</span>
+                <span class="big mono" id="home-total">$0.00</span>
+                <span class="k"><span id="home-count">0</span> things you'll likely need</span>
+                <div class="row2"><span>Saving vs your usual</span><b class="mono" id="home-save">$0.00</b></div>
+              </div>
+              <div class="pcard">
+                <h5>Due now <button class="linkish" data-go="list">Open list</button></h5>
+                <div class="chips" id="home-chips"></div>
+              </div>
+              <div class="pcard">
+                <h5>1 smart swap waiting <button class="linkish" data-go="list">Review</button></h5>
+                <span class="note">Own-brand Greek yoghurt 1kg, same size, $2.20 less than your usual brand.</span>
+              </div>
+              <div class="pcard">
+                <h5>Last week you really saved <span class="mono" style="color:var(--accent)">$8.40</span></h5>
+                <span class="note">Confirmed from your Sat 14 Nov receipt: 6 of 8 suggested items bought.</span>
+                <span class="check-badge"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6.5l2.5 2.5L10 3"/></svg>Every figure number-checked</span>
+              </div>
+            </div>
+
+            <!-- LIST -->
+            <div class="screen" id="scr-list" role="tabpanel" aria-label="List" hidden>
+              <div class="s-title">This week</div>
+              <div class="s-sub">Ordered by aisle · prices checked today</div>
+              <div class="grp-h"><span>Due this week</span><span id="list-progress">0 of 0</span></div>
+              <div id="list-due"></div>
+              <div class="grp-h"><span>Maybe · lower confidence</span><span>not in total</span></div>
+              <div id="list-maybe" class="maybe"></div>
+              <div class="list-foot">
+                <span>Total · saving <b class="mono" style="color:var(--accent);font-size:14px" id="list-save">$0.00</b></span>
+                <b class="mono" id="list-total">$0.00</b>
+              </div>
+            </div>
+
+            <!-- ASK -->
+            <div class="screen" id="scr-ask" role="tabpanel" aria-label="Ask" hidden>
+              <div class="s-title">Ask NeedSmart</div>
+              <div class="s-sub">Answers come from your own receipts</div>
+              <div class="chat" id="chat" aria-live="polite">
+                <div class="msg bot">Hi Alex. Ask me about your list, your savings or your basket. I'll show which tools I used.</div>
+              </div>
+              <div class="qchips" id="qchips"></div>
+            </div>
+
+            <!-- ME -->
+            <div class="screen" id="scr-me" role="tabpanel" aria-label="Me" hidden>
+              <div class="s-title">Your shopping style</div>
+              <div class="s-sub">Last 26 weeks · 38 receipts</div>
+              <div class="persona">
+                <span class="k">You shop like a</span>
+                <span class="v">Planner who stocks up</span>
+                <p>One big Saturday shop, and you buy extra when your regulars go on special.</p>
+              </div>
+              <div>
+                <div class="trait"><span class="t">Brand loyal</span><span class="n mono">7 of 12</span><span class="d">need groups where you buy one brand 80%+ of the time</span></div>
+                <div class="trait"><span class="t">Bought on special</span><span class="n mono">31%</span><span class="d">of items, across 38 receipts</span></div>
+                <div class="trait"><span class="t">Stock-up on specials</span><span class="n mono">1.8×</span><span class="d">usual quantity when a regular is discounted</span></div>
+                <div class="trait"><span class="t">Open to own brand</span><span class="n mono">4 groups</span><span class="d">dairy, pasta, rice, cleaning: you switched and stayed</span></div>
+              </div>
+              <div class="pcard">
+                <h5>Households like yours <span class="pill part" style="font-size:10px;padding:2px 8px">aggregate</span></h5>
+                <span class="note">You save more than <b>64%</b> of similar 4-person households.</span>
+                <div class="meter" aria-hidden="true"><i style="width:64%"></i><b style="left:50%"></b></div>
+                <span class="note">Line marks the median. Built from anonymised aggregate tables only.</span>
+              </div>
+            </div>
+
+            <!-- BASKET -->
+            <div class="screen" id="scr-basket" role="tabpanel" aria-label="Basket" hidden>
+              <div class="s-title">Your basket</div>
+              <div class="s-sub">Describes the basket, never the person</div>
+              <div class="pcard">
+                <h5>Where the money goes <span class="note">this quarter</span></h5>
+                <div class="bars">
+                  <div class="bar"><span>Fruit &amp; veg</span><span class="track"><i style="width:80%"></i></span><span class="pc mono">24%</span></div>
+                  <div class="bar"><span>Pantry</span><span class="track"><i style="width:60%"></i></span><span class="pc mono">18%</span></div>
+                  <div class="bar"><span>Meat &amp; fish</span><span class="track"><i style="width:53%"></i></span><span class="pc mono">16%</span></div>
+                  <div class="bar"><span>Dairy &amp; eggs</span><span class="track"><i style="width:47%"></i></span><span class="pc mono">14%</span></div>
+                  <div class="bar snack"><span>Snacks</span><span class="track"><i style="width:40%"></i></span><span class="pc mono">12%</span></div>
+                  <div class="bar"><span>Household</span><span class="track"><i style="width:33%"></i></span><span class="pc mono">10%</span></div>
+                  <div class="bar"><span>Other</span><span class="track"><i style="width:20%"></i></span><span class="pc mono">6%</span></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <h5>Health Star Rating mix</h5>
+                <div class="stack" aria-hidden="true"><i style="width:41%;background:var(--accent)"></i><i style="width:37%;background:var(--info)"></i><i style="width:22%;background:var(--warn)"></i></div>
+                <div class="legend"><span style="--c:var(--accent)">4–5 stars 41%</span><span style="--c:var(--info)">2.5–3.5 · 37%</span><span style="--c:var(--warn)">0.5–2 · 22%</span></div>
+                <span class="note">Of rated products, by spend. From product data, not guessed.</span>
+              </div>
+              <div class="pcard">
+                <h5>Trend</h5>
+                <span class="note">Fruit &amp; veg share up <b>3 points</b> on last quarter. Snacks up <b>2 points</b>.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-tabs" role="tablist" aria-label="App screens">
+            <button class="p-tab" role="tab" data-screen="home" aria-selected="true" aria-controls="scr-home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg>Home</button>
+            <button class="p-tab" role="tab" data-screen="list" aria-selected="false" aria-controls="scr-list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>List</button>
+            <button class="p-tab" role="tab" data-screen="ask" aria-selected="false" aria-controls="scr-ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>Ask</button>
+            <button class="p-tab" role="tab" data-screen="me" aria-selected="false" aria-controls="scr-me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>Me</button>
+            <button class="p-tab" role="tab" data-screen="basket" aria-selected="false" aria-controls="scr-basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18l-2 11H5L3 9zM8 9l4-6 4 6"/></svg>Basket</button>
+          </div>
+        </div>
+
+        <div class="rail">
+          <div class="steps" id="steps" aria-label="Guided tour"></div>
+          <div class="narr" aria-live="polite">
+            <div class="status-row" id="n-status"></div>
+            <h3 id="n-title"></h3>
+            <p class="say" id="n-say"></p>
+            <ul class="notice" id="n-notice"></ul>
+          </div>
+          <div class="rail-nav">
+            <button class="btn" id="prev" type="button">Back</button>
+            <button class="btn solid" id="next" type="button">Next screen</button>
+            <span class="hint"><kbd>←</kbd> <kbd>→</kbd> to step through</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== IMPACT ===================== -->
+  <section class="block gutter" id="impact" aria-labelledby="h-impact">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Immediate impact</span>
+        <h2 id="h-impact">Same week, same needs. With and without NeedSmart.</h2>
+        <p>The Rivera household's 8 needs for Thursday, priced two ways. Switch the comparison to see the honest number and the one most apps would quote.</p>
+      </div>
+
+      <div class="seg" role="group" aria-label="Compare NeedSmart against">
+        <button type="button" data-base="usual" aria-pressed="true">vs their usual shop</button>
+        <button type="button" data-base="popular" aria-pressed="false">vs a typical shopper</button>
+      </div>
+
+      <div class="impact">
+        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+          <div class="verdict" aria-live="polite">
+            <span class="k" id="v-k">Saved this week vs their usual shop</span>
+            <span class="big" id="v-big">$0.00</span>
+            <span class="pct" id="v-pct">less on the same shop</span>
+            <div class="split">
+              <div><span>Without NeedSmart</span><b id="v-without">$0.00</b></div>
+              <div><span>With NeedSmart</span><b id="v-with">$0.00</b></div>
+            </div>
+            <p class="annual">Simple annual illustration: <b id="v-year">$0</b>
+              <small>This week × 52. Real weeks vary; the pilot measures the actual figure.</small></p>
+          </div>
+          <p class="basis" id="v-basis"></p>
+        </div>
+
+        <div class="cmp">
+          <table>
+            <thead><tr><th>Need</th><th id="th-without">Without · their usual</th><th>With NeedSmart</th><th class="num">Difference</th></tr></thead>
+            <tbody id="cmp-body"></tbody>
+            <tfoot><tr><td>8 needs</td><td class="num" id="ft-without" style="text-align:left"></td><td class="num" id="ft-with" style="text-align:left"></td><td class="num diff-pos" id="ft-diff"></td></tr></tfoot>
+          </table>
+        </div>
+      </div>
+
+      <h3 class="prove-h">How we'd prove it with real data, before and after launch</h3>
+      <div class="prove">
+        <div><span class="when">Discovery · no app needed</span><h4>Replay past receipts</h4><p>Run NeedSmart over 6 months of opted-in staff receipts. Compare what each household paid with what its list would have cost for the same needs.</p></div>
+        <div><span class="when">Staff pilot</span><h4>Test against a control group</h4><p>Matched households without NeedSmart. Compare spend per need, top-up trips and forgotten items over the same weeks.</p></div>
+        <div><span class="when">Live</span><h4>Confirm from the next receipt</h4><p>Each member sees what they really saved, measured from what they actually bought, not what was offered.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section class="block gutter" id="how" aria-labelledby="h-how">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">How it works</span>
+        <h2 id="h-how">Learn centrally. Personalise on the phone.</h2>
+        <p>Our de-identified purchase history teaches NeedSmart how households shop. Each member's own list is then worked out on their phone, from the eReceipts they already see, so we never build a new central profile of what a household will need.</p>
+      </div>
+
+      <div class="arch">
+        <div class="lane src">
+          <div class="lh"><span class="eyebrow">Systems we already run</span><h3>Sources</h3></div>
+          <div class="node personal"><b>Member eReceipts</b><span>Sent straight to the member's phone, as today. The only personal input to their list.</span></div>
+          <div class="node"><b>Purchase history, de-identified</b><span>Used centrally only to study patterns, train models and build cohort tables</span></div>
+          <div class="node"><b>Product master</b><span>Hierarchy, brand, size, unit, Health Star Rating</span></div>
+          <div class="node"><b>Specials &amp; pricing</b><span>Weekly catalogue, multi-buys, member prices</span></div>
+        </div>
+        <div class="conn" aria-hidden="true"><svg viewBox="0 0 40 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 10h34M28 3l8 7-8 7"/></svg><small>nightly build</small></div>
+        <div class="lane cloud">
+          <div class="lh"><span class="eyebrow">AWS · shared data only</span><h3>Data pack service</h3></div>
+          <div class="node"><b>Pack builder</b><span>Validates and versions each pack</span><span class="aws">Step Functions · Lambda · Glue</span></div>
+          <div class="node"><b>Need models</b><span>Need-group map and prediction model, trained on de-identified history. Ships the model, never a person's data.</span><span class="aws">SageMaker · S3</span></div>
+          <div class="node"><b>Offers &amp; nutrition pack</b><span>This week's deals plus HSR per product</span><span class="aws">S3 · CloudFront</span></div>
+          <div class="node"><b>Benchmark pack</b><span>Percentile tables for "households like yours"</span><span class="aws">Athena · S3</span></div>
+        </div>
+        <div class="conn" aria-hidden="true"><svg viewBox="0 0 40 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 10h34M28 3l8 7-8 7"/></svg><small>downloaded whole</small></div>
+        <div class="lane device">
+          <div class="lh"><span class="eyebrow">Member's phone · personal</span><h3>NeedSmart engines</h3></div>
+          <div class="engines">
+            <div class="node"><b>Needs</b><span>When each need is due</span></div>
+            <div class="node"><b>Matching</b><span>Best deal per need</span></div>
+            <div class="node"><b>Pricing</b><span>Usual price, real saving</span></div>
+            <div class="node"><b>Profile</b><span>Shopping style, swaps</span></div>
+            <div class="node"><b>Basket</b><span>Category &amp; HSR mix</span></div>
+            <div class="node"><b>Assistant</b><span>On-device model + tools</span></div>
+          </div>
+          <div class="gate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>Number-checker gates every figure shown</div>
+        </div>
+      </div>
+      <div class="personal-path">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        <span>eReceipts reach the phone as they do today. The phone downloads whole packs and models, and never asks the cloud a question that reveals what the household needs. Predictions and the list stay on the device; we never store them.</span>
+      </div>
+
+      <div class="onphone">
+        <div class="lead">
+          <span class="eyebrow">Why the personal list runs on the phone</span>
+          <h3>Same data we already hold. A safer place to use it.</h3>
+          <p>We have the full purchase history, so we could build every list centrally. We choose not to. The history teaches the model; each member's list is worked out on their own phone.</p>
+          <div class="split2">
+            <div><span class="k">Central · de-identified</span><b>Full purchase history</b><span>Premise study, need-groups, model training</span></div>
+            <div><span class="k">On the phone · personal</span><b>The member's eReceipts</b><span>Their own list, predictions and savings</span></div>
+          </div>
+        </div>
+        <div class="reasons">
+          <div class="reason"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6l7-3z"/></svg></span><div><h4>No new profile to hold</h4><p>Predictions like "this household will need nappies on Thursday" never reach our systems. We can't misuse, leak or be asked to hand over what we don't have.</p></div></div>
+          <div class="reason"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></span><div><h4>Less to protect</h4><p>No new central dataset means no new breach risk and an easier privacy review. To "what are we storing?", the answer is nothing new.</p></div></div>
+          <div class="reason"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span><div><h4>Near-zero compute cost</h4><p>Re-forecasting hundreds of needs for millions of members runs on their phones, not our cloud. Only shared packs and models are built centrally, once.</p></div></div>
+          <div class="reason"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z"/></svg></span><div><h4>Trust members can feel</h4><p>"Your list is worked out on your phone, from your own receipts." Own-brand swaps then read as advice, not a sales push.</p></div></div>
+          <div class="reason"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></span><div><h4>Simple consent and control</h4><p>It uses receipts members already see. If they turn NeedSmart off, the list is gone, with nothing to clean up on our side.</p></div></div>
+          <div class="reason"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><div><h4>Fast and offline in store</h4><p>The list works with no signal in the aisle, and updates instantly when a member ticks or swaps.</p></div></div>
+          <p class="pushback"><b>"Wouldn't central be simpler?"</b> Yes, for us. On the phone is safer for members and cheaper at scale. Training stays central, so model quality doesn't suffer.</p>
+        </div>
+      </div>
+
+      <div class="principles">
+        <div><h4>Nothing new to collect</h4><p>Runs on eReceipts members already have. No extra scanning or data entry.</p></div>
+        <div><h4>Whole packs only</h4><p>Shared data is downloaded in full and matched on the phone.</p></div>
+        <div><h4>Every number checked</h4><p>A figure that fails the checker is withheld, never shown.</p></div>
+        <div><h4>Basket, not person</h4><p>Health insight describes the basket. No diet or medical advice.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHY US ===================== -->
+  <section class="block gutter" id="why" aria-labelledby="h-why">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Why us, why now</span>
+        <h2 id="h-why">We hold the three ingredients an outside app can't get.</h2>
+        <p>A third-party app would need members to scan paper receipts and would guess at products. We already have clean receipts, product data and offers. The value to the business below is framed as hypotheses to prove in a pilot, not promises.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-col">
+          <h3>Our advantage</h3>
+          <div class="why-item"><b>Full history to learn from</b><span>Years of linked, itemised purchases already in our systems. De-identified, they power the premise study, the need-groups and model training. No new data collection.</span></div>
+          <div class="why-item"><b>eReceipts for the personal list, on the phone</b><span>Each member's list is worked out on their own phone from eReceipts they already get. We hold no new profile, pay almost nothing per member, and every prediction points to receipts they can open.</span></div>
+          <div class="why-item"><b>Real product data</b><span>The product hierarchy replaces fuzzy name-matching, so need-groups and Health Star Ratings come straight from the source.</span></div>
+          <div class="why-item"><b>Our own offers</b><span>Specials, multi-buys and member prices are first-party data, current to the day.</span></div>
+          <div class="why-item"><b>Scale for benchmarks</b><span>Real anonymised cohort tables make "households like yours" meaningful.</span></div>
+        </div>
+        <div class="why-col">
+          <h3>What it could move</h3>
+          <div class="why-item"><b>Weekly app habit</b><span>A list that writes itself gives members a reason to open the app before every shop.</span><span class="measure">Measure: weekly active members, list opens per shop</span></div>
+          <div class="why-item"><b>Trips kept with us</b><span>Fewer forgotten items means fewer top-up trips somewhere else.</span><span class="measure">Measure: list-to-basket conversion, visit frequency</span></div>
+          <div class="why-item"><b>Own-brand trial that sticks</b><span>Swaps offered only where the member has shown they accept them.</span><span class="measure">Measure: swap acceptance, repeat after swap</span></div>
+          <div class="why-item"><b>Trust in our savings</b><span>Savings that are checked and confirmed from the next receipt.</span><span class="measure">Measure: savings-claim trust score in pilot survey</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GAPS ===================== -->
+  <section class="block gutter" id="gaps" aria-labelledby="h-gaps">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Known gaps, each with a fix</span>
+        <h2 id="h-gaps">What isn't solved yet, and how we'd solve it.</h2>
+        <p>The prototype surfaced these honestly. None of them blocks a pilot; three need a decision from product.</p>
+      </div>
+      <div class="gap-legend">
+        <span class="pill built">Fix proven in prototype</span>
+        <span class="pill part">Fix designed</span>
+        <span class="pill vision">Needs a product decision</span>
+      </div>
+      <div class="gaps" id="gap-list"></div>
+    </div>
+  </section>
+
+  <!-- ===================== PLAN ===================== -->
+  <section class="block gutter" id="plan" aria-labelledby="h-plan">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Where it stands and where it goes</span>
+        <h2 id="h-plan">A working prototype today. A staged path to members.</h2>
+        <p>Each phase has an exit test. We only move on when the numbers say so. Durations are proposals to refine in discovery.</p>
+      </div>
+      <div class="road">
+        <div class="phase done">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="when">Done</span>
+          <h3>Prototype</h3>
+          <p>Receipt reading, need-groups, need prediction with a backtest, checked offer matching, list and dashboard. 6 of 10 build steps, 375 automated tests.</p>
+          <p class="exit"><b>Proved</b>The pipeline works end to end on a laptop.</p>
+        </div>
+        <div class="phase next">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="when">Proposed · 4–6 weeks</span>
+          <h3>Discovery</h3>
+          <p>Sandbox access to de-identified purchase history and product master. Run the premise study and backtest. Privacy impact assessment.</p>
+          <p class="exit"><b>Exit test</b>Need predictions beat the simple baseline on both hit rate and false reminders.</p>
+        </div>
+        <div class="phase">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="when">Proposed · 8 weeks</span>
+          <h3>Staff pilot</h3>
+          <p>List, swaps and savings in a beta build for opted-in staff. Feedback taps train the model.</p>
+          <p class="exit"><b>Exit test</b>Members use the list for most shops and confirmed savings hold up.</p>
+        </div>
+        <div class="phase">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="when">Proposed · 1 quarter</span>
+          <h3>Member beta</h3>
+          <p>Limited member cohort against a control group. Basket and benchmark screens switched on.</p>
+          <p class="exit"><b>Exit test</b>Measurable lift in app habit and trips versus control.</p>
+        </div>
+        <div class="phase">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="when">Later</span>
+          <h3>Scale + assistant</h3>
+          <p>General release, then the on-device assistant once it passes its accuracy checks.</p>
+          <p class="exit"><b>Exit test</b>Assistant answers pass the number-checker every time, or decline.</p>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <table>
+          <thead><tr><th>Success measure</th><th>Why it matters</th><th>How we'd measure it</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td><b>Reminder accuracy</b><span class="sub">share of "due" items actually bought</span></td><td>Wrong reminders erode trust faster than missed ones.</td><td>Rolling backtest, then live feedback taps</td><td>Beat baseline, set in discovery</td></tr>
+            <tr><td><b>List adoption</b><span class="sub">shops that start from the list</span></td><td>The core habit we're building.</td><td>App events in pilot</td><td>Set after staff pilot</td></tr>
+            <tr><td><b>Confirmed savings</b><span class="sub">vs the household's usual price</span></td><td>The honest value promise.</td><td>Next-receipt matching</td><td>100% of shown figures checked</td></tr>
+            <tr><td><b>Swap acceptance</b><span class="sub">accepted and repeated</span></td><td>Shows personalisation is right, not pushy.</td><td>Swap events plus next 3 receipts</td><td>Set after staff pilot</td></tr>
+            <tr><td><b>Privacy</b><span class="sub">personal data leaving the device</span></td><td>Non-negotiable for trust and review.</td><td>Automated egress test every build</td><td>Zero</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ASK ===================== -->
+  <section class="block gutter" id="ask" aria-labelledby="h-ask">
+    <div class="wrap">
+      <div class="ask">
+        <div class="intro">
+          <span class="eyebrow">The ask</span>
+          <h2 id="h-ask">Approve a 6-week discovery.</h2>
+          <p>Small, reversible, and it answers the one question that matters: does NeedSmart predict our members' needs well enough to earn a place in the app?</p>
+        </div>
+        <div class="asks">
+          <div class="ask-item"><span class="n">1</span><div><b>Green-light discovery</b><span>Time-boxed to 6 weeks, ending in a go or no-go on the staff pilot against the exit test above.</span></div></div>
+          <div class="ask-item"><span class="n">2</span><div><b>Sandbox data access</b><span>De-identified purchase history for the study, eReceipts for opted-in staff households, plus product master and specials, in an approved environment.</span></div></div>
+          <div class="ask-item"><span class="n">3</span><div><b>Three product decisions</b><span>Competitor price stance, where personalisation runs, and use of Health Star Ratings. Each has a recommendation in Gaps &amp; fixes.</span></div></div>
+          <div class="ask-item"><span class="n">4</span><div><b>A sponsor and a privacy contact</b><span>One product owner to steer, one privacy partner involved from week one.</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="gutter">
+  <div class="wrap">
+    <span>NeedSmart product vision · prepared for product review, 24 Nov 2026</span>
+    <span>All households, receipts, prices and percentages shown are synthetic examples.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const money = c => "$" + (c / 100).toFixed(2);
+
+  /* ---------- Synthetic list data (cents). Totals are computed, never typed. ---------- */
+  // usual = what this household normally pays (their own receipts).
+  // pop   = best-selling product in the need-group at regular shelf price (typical-shopper baseline).
+  // lever = what NeedSmart did to get the lower price.
+  const due = [
+    { id: "milk", need: "Milk", prod: "Full cream milk 3L", px: 465, usual: 465, unit: "$1.55/L", why: "Every 5 days · last bought 5 days ago",
+      pop: ["Best-seller full cream 3L", 465], lever: null },
+    { id: "bread", need: "Bread", prod: "Wholemeal sandwich 700g", px: 380, usual: 450, unit: "$0.54/100g", why: "Every 6 days · on special",
+      pop: ["Best-seller white 700g", 490], lever: "On special" },
+    { id: "yog", need: "Greek yoghurt", prod: "Usual brand Greek 1kg", px: 720, usual: 720, unit: "$0.72/100g", why: "Every 9 days · due Thu",
+      swap: { prod: "Own-brand Greek 1kg", px: 500, unit: "$0.50/100g" }, pop: ["Best-seller Greek 1kg", 750], lever: "Own-brand swap" },
+    { id: "banana", need: "Bananas", prod: "Bananas ~1.2kg", px: 468, usual: 468, unit: "$3.90/kg", why: "Every 7 days",
+      pop: ["Bananas ~1.2kg", 468], lever: null },
+    { id: "eggs", need: "Eggs", prod: "Free range eggs 12pk", px: 650, usual: 650, unit: "$0.54 each", why: "Every 8 days",
+      pop: ["Best-seller free range 12pk", 690], lever: null },
+    { id: "coffee", need: "Coffee beans", prod: "Coffee beans 1kg", px: 2200, usual: 2700, unit: "$2.20/100g", why: "Due in 5 days · buy early, on special",
+      pop: ["Best-seller beans 1kg", 2900], lever: "Bought early, on special" },
+    { id: "chicken", need: "Chicken breast", prod: "Chicken breast fillets 1kg", px: 1100, usual: 1300, unit: "$11.00/kg", why: "Every 8 days",
+      pop: ["Best-seller breast fillets 1kg", 1300], lever: "On special" },
+    { id: "pasta", need: "Pasta", prod: "Spaghetti 500g × 2 (multi-buy)", px: 300, usual: 400, unit: "$0.30/100g", why: "Every 14 days · 2 for $3",
+      pop: ["Best-seller spaghetti 500g × 2", 480], lever: "Multi-buy 2 for $3" }
+  ];
+  const maybe = [
+    { need: "Dishwasher tablets", prod: "60 pack", why: "Likely in 6–10 days · medium confidence" },
+    { need: "Toilet paper", prod: "24 pack", why: "Irregular pattern · we'll ask, not assume" }
+  ];
+  const state = { swap: null, ticked: new Set() }; // swap: null (pending), true (accepted), false (kept brand)
+
+  function linePrice(it) { return it.swap && state.swap === true ? it.swap.px : it.px; }
+  function lineSaving(it) { return it.usual - linePrice(it); }
+  function totals() {
+    let t = 0, s = 0;
+    due.forEach(it => { t += linePrice(it); s += lineSaving(it); });
+    return { t, s };
+  }
+
+  function renderList() {
+    const host = $("#list-due");
+    host.innerHTML = "";
+    due.forEach(it => {
+      const swapped = it.swap && state.swap === true;
+      const row = document.createElement("div");
+      row.className = "item" + (state.ticked.has(it.id) ? " done" : "");
+      const sav = lineSaving(it);
+      row.innerHTML =
+        `<input type="checkbox" id="tick-${it.id}" aria-label="Got ${it.need}" ${state.ticked.has(it.id) ? "checked" : ""}>` +
+        `<label for="tick-${it.id}" style="cursor:pointer"><span class="nm">${it.need}</span><br>` +
+        `<span class="prod">${swapped ? it.swap.prod : it.prod}</span><br><span class="why">${it.why}</span></label>` +
+        `<span class="right"><span class="px">${money(linePrice(it))}</span>` +
+        `<span class="unit">${swapped ? it.swap.unit : it.unit}</span>` +
+        (sav > 0 ? `<span class="save">−${money(sav).slice(1)}</span>` : "") + `</span>`;
+      host.appendChild(row);
+      row.querySelector("input").addEventListener("change", e => {
+        e.target.checked ? state.ticked.add(it.id) : state.ticked.delete(it.id);
+        renderAll();
+      });
+      if (it.swap && state.swap === null) {
+        const sw = document.createElement("div");
+        sw.className = "swap";
+        sw.innerHTML = `<span class="sw-t">Smart swap</span>` +
+          `<span>${it.swap.prod} is <b>${money(it.swap.px)}</b> (${it.swap.unit}). You've switched to own brand in 4 other groups and stayed.</span>` +
+          `<span class="sw-b"><button type="button" class="primary" data-swap="yes">Swap, save ${money(it.px - it.swap.px)}</button><button type="button" data-swap="no">Keep my brand</button></span>`;
+        host.appendChild(sw);
+        sw.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+          state.swap = b.dataset.swap === "yes";
+          renderAll();
+        }));
+      }
+    });
+    const mh = $("#list-maybe");
+    mh.innerHTML = maybe.map(m =>
+      `<div class="item"><span></span><span><span class="nm">${m.need}</span><br><span class="prod">${m.prod}</span><br><span class="why">${m.why}</span></span><span class="right"><span class="unit">not priced</span></span></div>`
+    ).join("");
+  }
+
+  function renderAll() {
+    const { t, s } = totals();
+    $("#home-total").textContent = money(t);
+    $("#home-save").textContent = money(s);
+    $("#home-count").textContent = due.length;
+    $("#list-total").textContent = money(t);
+    $("#list-save").textContent = money(s);
+    $("#list-progress").textContent = `${state.ticked.size} of ${due.length} in trolley`;
+    $("#home-chips").innerHTML = due.filter(d => /due|special|5 days/i.test(d.why)).slice(0, 4)
+      .map(d => `<span class="chip due">${d.need}</span>`).join("") +
+      due.filter(d => !/due|special|5 days/i.test(d.why)).slice(0, 3).map(d => `<span class="chip">${d.need}</span>`).join("");
+    renderList();
+  }
+
+  /* ---------- Shared hover tooltip (pointer and keyboard focus) ---------- */
+  const tip = document.createElement("div");
+  tip.className = "tip"; tip.hidden = true; tip.setAttribute("role", "tooltip");
+  document.body.appendChild(tip);
+  function bindTips(root) {
+    $$("[data-tip]", root).forEach(el => {
+      const place = (x, y) => {
+        const w = tip.offsetWidth, h = tip.offsetHeight;
+        tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, x + 12)) + "px";
+        tip.style.top = Math.max(8, y - h - 12) + "px";
+      };
+      el.addEventListener("pointerenter", e => { tip.textContent = el.dataset.tip; tip.hidden = false; place(e.clientX, e.clientY); });
+      el.addEventListener("pointermove", e => place(e.clientX, e.clientY));
+      el.addEventListener("pointerleave", () => { tip.hidden = true; });
+      el.addEventListener("focus", () => { const r = el.getBoundingClientRect(); tip.textContent = el.dataset.tip; tip.hidden = false; place(r.left + r.width / 2, r.top); });
+      el.addEventListener("blur", () => { tip.hidden = true; });
+    });
+  }
+
+  /* ---------- Premise study: the four filters, each with reason / method / outcome ---------- */
+  const filters = [
+    { q: "Is there enough history?", line: "Enough receipts to see a pattern.", tech: ["rules", "Rules"], exp: "≈ half of active members qualify",
+      reason: "A prediction is only as good as the history behind it. With too few shops, or a card that often isn't scanned, missing receipts look like broken habits and reminders go wrong.",
+      method: ["Count linked receipts over the last 26 weeks. 12 or more qualifies.", "Check how often they shop, and whether gaps look like missed card scans.", "Estimate their share of wallet: compare their weekly spend with us to what a similar household (same size, same area) typically spends on groceries. Well below that means they also shop elsewhere, so some \"missed\" buys may simply happen at another store.", "For new members, an item needs about 3 buys: milk shows in about 2 weeks, coffee in about 7."],
+      outcome: "Each member is either <b>eligible</b> or <b>building history</b>. Eligible members move on to Filter 2. Everyone else sees \"Scan your card for a few more weeks to unlock your list.\"",
+      ev: "How long until a pattern shows" },
+    { q: "Do they shop the same way, week after week?", line: "Steady habits make believable reminders.", tech: ["rules", "Rules"], exp: "≈ 80% steady or mixed",
+      reason: "A reminder only feels helpful if it lands at the right time, and that needs habits that repeat. Where habits don't repeat, NeedSmart should say less, not guess.",
+      method: ["For each item, measure how steady the gaps between purchases are. Lower scores are steadier.", "Allow for how much they bought. Two bottles of milk instead of one should push the next buy back, not count as a broken habit.", "Sort the household as steady, mixed or unpredictable.", "Compare the last three months with the three before. If habits have changed, newer behaviour counts more."],
+      outcome: "Every eligible household gets a tier, and each tier gets a different list. <b>Steady:</b> confident \"due\" reminders. <b>Mixed:</b> reminders for staples, the rest under \"Maybe\". <b>Unpredictable:</b> deals first, no timing claims.",
+      ev: "One household, 26 weeks · Which needs repeat most" },
+    { q: "What do they actually need?", line: "Needs, not barcodes, plus each household's habits.", tech: ["ml", "ML suggests, people approve"], exp: "≈ 70%+ of spend repeats by need",
+      reason: "By barcode, most products look like one-offs, because brands, sizes and flavours change. Grouped by what they are, the repeats appear. And two households buying \"yoghurt\" can want very different things.",
+      method: ["Start from our product hierarchy. Refine it with products members switch between, which belong together.", "ML suggests the groups; a person approves them.", "For each household and need, measure brand indifference: how often they switch brands, whether switches follow specials, and whether they come back.", "Learn must-haves that never change, like lactose-free, and usual pack size.", "If one need hides two rhythms, like kids' pouches and Greek yoghurt, split it in two."],
+      outcome: "A <b>personal need list</b> for each household. Swaps are offered <b>only where the brand doesn't matter to them</b>, and stop when they stick: never for a loyal coffee buyer, always the cheapest acceptable option for a flexible pasta buyer.",
+      ev: "Same receipts, two lenses · Two households' rules · The yoghurt split · Swaps that learn" },
+    { q: "Can we predict the next buy?", line: "Simple rules first. ML only if it wins.", tech: ["ml", "ML must beat the rules"], exp: "ML wins on short histories",
+      reason: "This is the promise members see: \"you'll need coffee by Thursday\". Wrong reminders cost trust faster than missed ones, so every prediction is tested before anyone sees it.",
+      method: ["Baseline: the simple rhythm rule. Milk is due about 5 days after the last purchase.", "Challenger: an ML model that also weighs specials, holidays, household changes and similar households. It helps most where history is short.", "Test both on later weeks neither has seen. Count how many reminders were right and how many purchases they caught."],
+      outcome: "Whichever wins ships. If ML doesn't beat the rules, we <b>launch on the rules</b> and ML stays in research. Either way, only tested predictions become \"due\" reminders.",
+      ev: "Hypotheses table at the end of this section" }
+  ];
+  /* Cohort funnel, per 100 active members (illustrative). levels[i+1] is what survives filter i;
+     zooms[i] splits levels[i] into who moves on and what everyone else gets. Segments sum to the parent. */
+  const MIX = "color-mix(in srgb, var(--accent) 45%, var(--surface-2))";
+  const levels = [
+    { n: 100, l: "Active members", s: "with a linked card" },
+    { n: 58, l: "Enough history", s: "after Filter 1" },
+    { n: 46, l: "Shop consistently", s: "after Filter 2" },
+    { n: 41, l: "Enough regular needs", s: "after Filter 3" },
+    { n: 38, l: "On-time reminders", s: "after Filter 4" }
+  ];
+  const zooms = [
+    { segs: [{ k: "Enough history", n: 58, keep: true, p: "12+ linked receipts in 26 weeks. Moves on to Filter 2." },
+             { k: "Building history", n: 42, p: "Sees \"Scan your card for a few more weeks to unlock your list.\"" }],
+      note: "About 1 in 6 of the 58 has a low share of wallet, so their reminders stay cautious." },
+    { segs: [{ k: "Steady", n: 22, keep: true, p: "Confident \"due\" reminders for most of the list." },
+             { k: "Mixed", n: 24, keep: true, c: MIX, ink: "var(--fg)", p: "Reminders for staples; the rest under \"Maybe\"." },
+             { k: "Unpredictable", n: 12, p: "Deals-first list with no timing claims." }] },
+    { segs: [{ k: "5+ regular needs", n: 41, keep: true, p: "A personal need list, about 14 needs each." },
+             { k: "Fewer than 5", n: 5, p: "A short staples list under \"Maybe\"." }],
+      note: "About 1 in 6 has a need that splits in two, like the Riveras' yoghurt." },
+    { segs: [{ k: "Reminders pass the test", n: 38, keep: true, p: "On-time \"due\" reminders, tested on weeks the model never saw." },
+             { k: "Not yet", n: 3, p: "Stays on \"Maybe\" until the timing proves itself." }],
+      note: "38 of every 100 active members get on-time reminders. Everyone else still gets a useful list." }
+  ];
+  function cohortHTML(i) {
+    const parent = levels[i], z = zooms[i];
+    const fl = levels.map((lv, k) => {
+      const st = k < i + 1 ? "done" : k === i + 1 ? "cur" : "todo";
+      const inner = `<span class="fb"><i style="width:${lv.n}%">${lv.n}</i></span><span class="fl"><b>${lv.l}</b><span>${lv.s}</span></span>`;
+      return k === 0 ? `<div class="flevel ${st}">${inner}</div>`
+        : `<button type="button" class="flevel ${st}" data-goto="${k - 1}" aria-label="Show Filter ${k}: ${lv.n} of 100, ${lv.l}">${inner}</button>`;
+    }).join("");
+    const segStyle = s => s.keep ? `background:${s.c || "var(--accent)"};color:${s.ink || "var(--accent-ink)"}` : `background:transparent;border:1.5px dashed var(--muted);color:var(--muted)`;
+    const bar = z.segs.map(s => `<i style="width:${s.n / parent.n * 100}%;${segStyle(s)}" title="${s.k}: ${s.n} of 100">${s.n}</i>`).join("");
+    const rows = z.segs.map(s => `<div class="zrow" style="--c:${s.keep ? (s.c || "var(--accent)") : "transparent"};--b:${s.keep ? "transparent" : "var(--muted)"}">
+        <span><b>${s.k}${s.keep ? "" : " · other path"}</b><span>${s.p}</span></span><span class="zc">${s.n} of 100</span></div>`).join("");
+    return `<div class="cohort">
+      <div><span class="ch">The cohort, per 100 active members · illustrative</span><div class="flevels">${fl}</div></div>
+      <div class="zoom"><span class="ch">Zooming in</span><h4>Filter ${i + 1} splits the ${parent.n} ${i ? "from the step before" : "active members"}</h4>
+        <div class="zbar" role="img" aria-label="${z.segs.map(s => `${s.k} ${s.n}`).join(", ")}">${bar}</div>
+        <div class="zlist">${rows}</div>${z.note ? `<p class="znote">${z.note}</p>` : ""}</div>
+    </div>`;
+  }
+
+  let fsel = 0;
+  $("#stages").innerHTML = filters.map((f, i) =>
+    `<button type="button" class="stage" role="tab" id="ftab-${i}" aria-controls="fpanel" aria-selected="false" tabindex="-1" data-f="${i}">
+      <span class="n">Filter ${i + 1}</span><h4>${f.q}</h4><p>${f.line}</p>
+      <span class="meta"><span class="cnt">Keeps <b>${levels[i + 1].n}</b> of ${levels[i].n}</span><span class="tchip ${f.tech[0]}">${f.tech[1]}</span></span><span class="more">Reason, method, outcome ↓</span></button>`).join("");
+  function showFilter(i, focus) {
+    fsel = (i + filters.length) % filters.length;
+    const f = filters[fsel];
+    $$(".stage").forEach((b, k) => { b.setAttribute("aria-selected", String(k === fsel)); b.tabIndex = k === fsel ? 0 : -1; });
+    $("#fpanel").setAttribute("aria-labelledby", "ftab-" + fsel);
+    $("#fpanel").innerHTML = `
+      <div class="fp-head"><span class="eyebrow">Filter ${fsel + 1} of 4</span><h3>${f.q}</h3>
+        <div class="fp-chips"><span class="tchip ${f.tech[0]}">${f.tech[1]}</span><span class="tchip exp">Expected: ${f.exp} · illustrative</span></div></div>
+      ${cohortHTML(fsel)}
+      <div class="rmo">
+        <div><span class="k"><i>1</i>Reason</span><p>${f.reason}</p></div>
+        <div><span class="k"><i>2</i>Method</span><ul>${f.method.map(m => `<li>${m}</li>`).join("")}</ul></div>
+        <div><span class="k"><i>3</i>Outcome</span><p>${f.outcome}</p><p class="ev">Evidence below: ${f.ev}</p></div>
+      </div>
+      <div class="fp-nav">
+        ${fsel > 0 ? `<button type="button" class="btn" data-fnav="-1">← Filter ${fsel}</button>` : ""}
+        ${fsel < filters.length - 1 ? `<button type="button" class="btn solid" data-fnav="1">Next: Filter ${fsel + 2} →</button>` : `<a class="btn solid" href="#prototype">Next: see it in the prototype →</a>`}
+      </div>`;
+    $$("[data-fnav]", $("#fpanel")).forEach(b => b.addEventListener("click", () => showFilter(fsel + +b.dataset.fnav, true)));
+    $$("[data-goto]", $("#fpanel")).forEach(b => b.addEventListener("click", () => showFilter(+b.dataset.goto)));
+    if (focus) $("#ftab-" + fsel).focus();
+  }
+  $$(".stage").forEach(b => b.addEventListener("click", () => showFilter(+b.dataset.f)));
+  // Arrow keys move between filter tabs (standard tablist behaviour).
+  $("#stages").addEventListener("keydown", e => {
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+    if (!step) return;
+    e.preventDefault(); e.stopPropagation();
+    showFilter(fsel + step, true);
+  });
+  showFilter(0);
+
+  /* ---------- Premise study: illustrative expected output (synthetic) ---------- */
+  const median = a => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+  // Regularity = median absolute deviation of gaps / median gap. Same rule as the prototype's need engine.
+  const regularity = gaps => { const md = median(gaps); return median(gaps.map(g => Math.abs(g - md))) / md; };
+  const classOf = s => s <= 0.25 ? ["Regular", "var(--accent)"] : s <= 0.75 ? ["Somewhat regular", "color-mix(in srgb, var(--accent) 45%, var(--surface-2))"] : ["Irregular", "var(--muted)"];
+  const SPAN = 181, START = Date.UTC(2026, 4, 24); // 26 weeks: Sun 24 May to Sat 21 Nov 2026
+  const fmtDay = d => new Date(START + d * 864e5).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+  const rhythms = [
+    { need: "Milk", start: 3, pattern: [4, 6, 5, 6, 4, 5, 6, 4, 6, 5] },
+    { need: "Coffee beans", start: 6, pattern: [23, 26, 22, 25, 24, 21, 26] },
+    { need: "Dishwasher tablets", start: 10, pattern: [22, 38, 27, 45, 30] },
+    { need: "Toilet paper", start: 8, pattern: [4, 16, 52, 7, 34, 58] }
+  ].map(r => {
+    const days = [r.start];
+    for (let i = 0; ; i++) { const nx = days[days.length - 1] + r.pattern[i % r.pattern.length]; if (nx > SPAN) break; days.push(nx); }
+    const gaps = days.slice(1).map((d, i) => d - days[i]);
+    const score = regularity(gaps);
+    return { ...r, days, gaps, score, medGap: median(gaps), cls: classOf(score) };
+  });
+  // Draws purchase-dot timelines: one row per need, ticks as [day, label], fmt(day) for tooltips.
+  function drawStrip(svg, rows, span, ticks, fmt) {
+    const X0 = 196, X1 = 704, top = 38, step = 52, x = d => X0 + (X1 - X0) * d / span;
+    const axisY = top + (rows.length - 1) * step + 38;
+    let out = ticks.map(([d, m]) => `<line class="grid" x1="${x(d)}" x2="${x(d)}" y1="14" y2="${axisY}"></line><text class="ax" x="${x(d)}" y="${axisY + 22}" text-anchor="middle">${m}</text>`).join("");
+    out += `<line class="base" x1="${X0}" x2="${X1}" y1="${axisY}" y2="${axisY}"></line>`;
+    rows.forEach((r, i) => {
+      const y = top + i * step;
+      out += `<line class="base" x1="${X0}" x2="${X1}" y1="${y}" y2="${y}"></line>`;
+      out += `<text class="lbl" x="0" y="${y - 3}">${r.need}</text>`;
+      out += `<text class="cls" x="0" y="${y + 14}">${r.cls[0]} · ${r.score.toFixed(2)}</text>`;
+      out += r.days.map((d, k) => `<circle cx="${x(d).toFixed(1)}" cy="${y}" r="5" style="fill:${r.cls[1]}" data-tip="${r.need} · ${fmt(d)}${k ? ` · ${d - r.days[k - 1]} days after the last` : " · first in window"}"></circle>`).join("");
+    });
+    svg.setAttribute("viewBox", `0 0 720 ${axisY + 30}`);
+    svg.innerHTML = out;
+    bindTips(svg);
+  }
+  drawStrip($("#rhythm"), rhythms, SPAN, [[8, "Jun"], [38, "Jul"], [69, "Aug"], [100, "Sep"], [130, "Oct"], [161, "Nov"]], fmtDay);
+
+  // One need that is really two: kids' pouches (every 4 days) and Greek 1kg (every ~9 days), last 8 weeks.
+  const S2 = Date.UTC(2026, 8, 26), SPAN2 = 56;
+  const fmt2 = d => new Date(S2 + d * 864e5).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+  const mkRow = (need, days) => { const gaps = days.slice(1).map((d, i) => d - days[i]), score = regularity(gaps); return { need, days, gaps, score, medGap: median(gaps), cls: classOf(score) }; };
+  const pouchDays = [2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54];
+  const greekDays = [4, 13, 23, 31, 40, 49];
+  const splitRows = [
+    mkRow("Yoghurt, as one need", [...pouchDays, ...greekDays].sort((a, b) => a - b)),
+    mkRow("Kids' pouches", pouchDays),
+    mkRow("Greek yoghurt 1kg", greekDays)
+  ];
+  drawStrip($("#split"), splitRows, SPAN2, [0, 14, 28, 42, 56].map(d => [d, fmt2(d).replace(/^\w+ /, "")]), fmt2);
+  $("#split-read").innerHTML = `As one need, the rhythm reads <b>"every ~${splitRows[0].medGap} days"</b>, which is wrong for both products. Split, pouches run every ~${splitRows[1].medGap} days and Greek every ~${splitRows[2].medGap}, both steady, so each gets its own reminder.`;
+
+  /* Time to first pattern for a new member: 2 cycles (3 buys) and 6 cycles (7 buys). */
+  const cycles = [["Milk", 5], ["Bread", 7], ["Eggs", 8], ["Yoghurt", 9], ["Coffee beans", 24], ["Dishwasher tabs", 30]];
+  const TMAX = 180, span = d => d < 14 ? `${d} days` : d < 60 ? `${Math.round(d / 7)} wks` : `${Math.round(d / 30)} mo`;
+  $("#ttp").innerHTML = cycles.map(([n, c]) => {
+    const a = 2 * c, b = 6 * c;
+    return `<div class="rrow" tabindex="0" data-tip="${n}: bought every ~${c} days. First pattern after ~${a} days, strong after ~${b} days.">
+      <span>${n}</span><span class="tr"><i style="left:0;width:${a / TMAX * 100}%;background:color-mix(in srgb, var(--accent) 45%, var(--surface-2))"></i><i style="left:calc(${a / TMAX * 100}% + 2px);width:calc(${(b - a) / TMAX * 100}% - 2px);background:var(--accent)"></i></span>
+      <span class="v">${span(a)} → ${span(b)}</span></div>`;
+  }).join("") +
+    `<div class="rrow axis" aria-hidden="true"><span></span><span class="tr">${[0, 30, 60, 90, 120, 150, 180].map(d => `<span style="left:${d / TMAX * 100}%">${d ? d / 30 + " mo" : "0"}</span>`).join("")}</span><span></span></div>`;
+  bindTips($("#ttp"));
+
+  /* Swap lineage: one household, two needs, seven buys each (illustrative). */
+  const swapLanes = [
+    { need: "Pasta", sub: "switches freely between brands", steps: [
+      { b: "Brand A" }, { b: "Brand B", nt: "on special" }, { b: "Brand A" },
+      { b: "Brand B", nt: "on special", sc: "0.67", evt: ["offer", "Indifferent → offer own brand"] },
+      { b: "Own brand", own: true, evt: ["yes", "✓ Took the swap"] },
+      { b: "Own brand", own: true, evt: ["yes", "✓ Bought it again"] },
+      { b: "Own brand", own: true, sc: "0.82", evt: ["keep", "Keeps suggesting the cheapest"] }] },
+    { need: "Coffee beans", sub: "sticks with one brand", steps: [
+      { b: "Brand X" }, { b: "Brand X" }, { b: "Brand Y", nt: "on special" },
+      { b: "Brand X", sc: "0.40", evt: ["offer", "Unsure → test one swap"] },
+      { b: "Brand X", evt: ["no", "✗ Kept their brand"] },
+      { b: "Brand X", evt: ["no", "✗ Kept it again"] },
+      { b: "Brand X", sc: "0.12", evt: ["stop", "Stops offering · flags Brand X specials"] }] }
+  ];
+  $("#lanes").innerHTML = swapLanes.map(l => `<div><div class="lane-h"><b>${l.need}</b><span>${l.sub}</span></div>
+    <div class="lrow">${l.steps.map((s, i) => `<div class="lstep">
+      <span class="sc">${s.sc ? `<b>score ${s.sc}</b>` : ""}</span>
+      <span class="tok${s.own ? " own" : ""}" title="Buy ${i + 1}: ${s.b}">${s.b}</span>
+      <span class="nt">${s.nt || ""}</span>
+      ${s.evt ? `<span class="evt ${s.evt[0]}">${s.evt[1]}</span>` : ""}</div>`).join("")}</div></div>`).join("");
+
+  const lens = [
+    { l: "Same product (barcode)", v: 31, why: "Brand, size or flavour changes break the pattern", dim: true },
+    { l: "Same need (any brand or size)", v: 74, why: "e.g. \"yoghurt\", whichever brand was on special" }
+  ];
+  $("#lens").innerHTML = lens.map(b => `<div class="hbar big" tabindex="0" data-tip="${b.l}: ${b.v}% of grocery spend repeats 3+ times in 26 weeks (illustrative)">
+      <div class="row"><b>${b.l}</b><span class="v">${b.v}%</span></div>
+      <span class="tr"><i class="${b.dim ? "dim" : ""}" style="width:${b.v}%"></i></span><span class="why">${b.why}</span></div>`).join("");
+
+  const byNeed = [["Milk", 72], ["Bread", 66], ["Bananas", 61], ["Eggs", 54], ["Yoghurt", 47], ["Coffee", 41], ["Dishwasher tablets", 29], ["Toilet paper", 24]];
+  $("#byneed").innerHTML = byNeed.map(([n, v]) => `<div class="hbar" tabindex="0" data-tip="${n}: ${v}% of households buy it on a regular rhythm (illustrative)">
+      <span>${n}</span><span class="tr"><i style="width:${v}%"></i></span><span class="v">${v}%</span></div>`).join("");
+  bindTips($("#lens")); bindTips($("#byneed"));
+
+  $("#num-table").innerHTML = `<thead><tr><th>Chart</th><th>Item</th><th>Value</th></tr></thead><tbody>` +
+    zooms.map((z, i) => z.segs.map(s => `<tr><td>Cohort · Filter ${i + 1}</td><td>${s.k}</td><td class="mono">${s.n} of every 100 active members${s.keep ? " · moves on" : " · other path"}</td></tr>`).join("")).join("") +
+    cycles.map(([n, c]) => `<tr><td>Time to pattern</td><td>${n}</td><td class="mono">cycle ~${c} days · first ~${2 * c} days · strong ~${6 * c} days</td></tr>`).join("") +
+    splitRows.map(r => `<tr><td>Yoghurt split</td><td>${r.need}</td><td class="mono">${r.days.length} buys · every ~${r.medGap} days · score ${r.score.toFixed(2)} (${r.cls[0].toLowerCase()})</td></tr>`).join("") +
+    rhythms.map(r => `<tr><td>Rhythm</td><td>${r.need}</td><td class="mono">${r.days.length} buys · every ~${r.medGap} days · score ${r.score.toFixed(2)} (${r.cls[0].toLowerCase()})</td></tr>`).join("") +
+    lens.map(b => `<tr><td>Two lenses</td><td>${b.l}</td><td class="mono">${b.v}% of spend</td></tr>`).join("") +
+    byNeed.map(([n, v]) => `<tr><td>By need</td><td>${n}</td><td class="mono">${v}% of households</td></tr>`).join("") + `</tbody>`;
+
+  /* ---------- Impact: the same 8 needs priced with and without NeedSmart ---------- */
+  // "With" assumes the swap is accepted, independent of what the viewer tapped in the prototype.
+  const withPx = it => it.swap ? it.swap.px : it.px;
+  const withName = it => it.swap ? it.swap.prod : it.prod;
+  const bases = {
+    usual: { k: "Saved this week vs their usual shop", th: "Without · their usual",
+      basis: "<b>Baseline: their usual shop.</b> Each need is priced at the product and price this household normally pays, taken from their own receipts. Only what NeedSmart changed counts: specials, timing, multi-buys and swaps. This is the number we'd show the member and headline in results.",
+      name: it => it.prod.replace(" (multi-buy)", ""), px: it => it.usual },
+    popular: { k: "Saved this week vs a typical shopper", th: "Without · typical shopper",
+      basis: "<b>Baseline: a typical shopper.</b> The best-selling product in each need-group at regular shelf price, same quantities. It's easy to grasp, but it flatters: part of the gap is this household already buying cheaper than average, not anything NeedSmart did. Rows marked \"already cheaper\" show where.",
+      name: it => it.pop[0], px: it => it.pop[1] }
+  };
+  let base = "usual";
+  function renderImpact() {
+    const b = bases[base];
+    let wo = 0, wi = 0;
+    $("#cmp-body").innerHTML = due.map(it => {
+      const a = b.px(it), w = withPx(it), d = a - w;
+      wo += a; wi += w;
+      let chip = "";
+      if (d > 0 && it.lever && w < it.usual) chip = `<span class="how">${it.lever}</span>`;
+      if (base === "popular" && it.usual < a) chip += ` <span class="how" style="color:var(--info);background:var(--info-soft)">already cheaper${it.lever ? "" : " than average"}</span>`;
+      return `<tr><td><b>${it.need}</b></td>` +
+        `<td>${b.name(it)}<span class="sub mono">${money(a)}</span></td>` +
+        `<td>${withName(it).replace(" (multi-buy)", "")}<span class="sub mono">${money(w)}</span>${chip}</td>` +
+        `<td class="num ${d > 0 ? "diff-pos" : "diff-zero"}">${d > 0 ? "−" + money(d) : "same"}</td></tr>`;
+    }).join("");
+    const save = wo - wi;
+    $("#th-without").textContent = b.th;
+    $("#ft-without").textContent = money(wo);
+    $("#ft-with").textContent = money(wi);
+    $("#ft-diff").textContent = "−" + money(save);
+    $("#v-k").textContent = b.k;
+    $("#v-big").textContent = money(save);
+    $("#v-pct").textContent = `${Math.round(save / wo * 100)}% less for the same 8 needs`;
+    $("#v-without").textContent = money(wo);
+    $("#v-with").textContent = money(wi);
+    $("#v-year").textContent = "$" + Math.round(save * 52 / 100).toLocaleString("en-AU");
+    $("#v-basis").innerHTML = b.basis;
+    $$(".seg button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.base === base)));
+  }
+  $$(".seg button").forEach(x => x.addEventListener("click", () => { base = x.dataset.base; renderImpact(); }));
+
+  /* ---------- Ask: scripted answers that mirror real tool calls ---------- */
+  const qa = [
+    { q: "Why is coffee on my list?", a: "You buy coffee beans about every 24 days and your last bag was 19 days ago. It's $22.00 this week, $5.00 below the $27.00 you usually pay, so buying a few days early saves money.", tools: ["needs.explain(\"coffee beans\")", "pricing.usual_price(\"coffee beans\")", "checker ✓ 2 figures verified"] },
+    { q: "How much did I really save last month?", a: "$31.40 across 5 shops, against what you usually pay for the same items. Your receipts also show $46.10 in shelf \"was price\" savings. That uses the store's previous price, so I keep it separate.", tools: ["outcomes.realised(month=\"Oct\")", "receipts.reported_savings(\"Oct\")", "checker ✓ 2 figures verified"] },
+    { q: "Am I buying more snacks lately?", a: "Snacks were 12% of your grocery spend this quarter, up from 10% last quarter. This describes your basket, not anyone's health.", tools: ["basket.category_share(\"snacks\", quarters=2)", "checker ✓ 2 figures verified"] },
+    { q: "Should I go on a diet?", a: "I can describe what's in your basket, but I don't give diet, health or medical advice. A GP or dietitian is the right person for that.", tools: ["policy: personal health advice declined"], refuse: true }
+  ];
+  let busy = false;
+  function renderChips() {
+    $("#qchips").innerHTML = qa.map((x, i) => `<button type="button" class="qchip" data-q="${i}" ${x.used ? "disabled" : ""}>${x.q}</button>`).join("");
+    $$("#qchips .qchip").forEach(b => b.addEventListener("click", () => ask(+b.dataset.q)));
+  }
+  function ask(i) {
+    if (busy || qa[i].used) return;
+    busy = true; qa[i].used = true;
+    const chat = $("#chat"), body = $("#pbody");
+    const me = document.createElement("div"); me.className = "msg me"; me.textContent = qa[i].q; chat.appendChild(me);
+    const bot = document.createElement("div"); bot.className = "msg bot" + (qa[i].refuse ? " refuse" : "");
+    bot.innerHTML = `<span class="typing" aria-label="Thinking"><i></i><i></i><i></i></span>`;
+    chat.appendChild(bot);
+    renderChips();
+    body.scrollTop = body.scrollHeight;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(() => {
+      bot.innerHTML = `<span></span><span class="tools">${qa[i].tools.map(t => `<span>${t}</span>`).join("")}</span>`;
+      bot.firstChild.textContent = qa[i].a;
+      busy = false;
+      body.scrollTop = body.scrollHeight;
+    }, reduce ? 0 : 900);
+  }
+
+  /* ---------- Guided tour narration ---------- */
+  const tour = [
+    { screen: "home", label: "Home", status: ["built", "Prototype: list total & savings"], status2: ["vision", "Vision: phone app"],
+      title: "The week, summarised in one card.",
+      say: "When Alex opens the app, NeedSmart has already read last Saturday's eReceipt and worked out what the household will run out of before Thursday.",
+      notice: ["Total and saving are computed from the list, not typed. Tick items or accept the swap and both update.", "\"Really saved\" is confirmed from the next receipt, not from a shelf tag.", "No setup: it ran on receipts the member already had."] },
+    { screen: "list", label: "List", status: ["built", "Prototype: checked list"], status2: null,
+      title: "A list that explains itself.",
+      say: "Each line says why it's there and what it costs per unit. Savings are measured against what this household usually pays.",
+      notice: ["Needs are predicted per need-group (\"yoghurt\"), so a brand switch doesn't break the forecast.", "Try the smart swap. It's offered because this household has accepted own brand elsewhere.", "Low-confidence items sit under \"Maybe\" and stay out of the total, so the forecast never overclaims."] },
+    { screen: "ask", label: "Ask", status: ["vision", "Vision: designed, not built"], status2: null,
+      title: "Questions answered from their own data.",
+      say: "A small on-device model understands the question. Deterministic tools do the maths, and the number-checker has the final word.",
+      notice: ["Tap a question. Each answer lists the tools it called, so it can be audited.", "Two savings figures, kept apart: real saving vs the shelf's \"was\" price.", "Try the last question: it declines health advice by design."] },
+    { screen: "me", label: "Me", status: ["part", "Prototype: behaviour measures"], status2: ["vision", "Vision: benchmarks"],
+      title: "\"What kind of shopper am I?\"",
+      say: "The profile turns habits into plain language and shows the numbers and time window behind every trait.",
+      notice: ["Brand loyalty decides when NeedSmart may suggest a swap, and when it won't.", "\"Households like yours\" uses anonymised aggregate tables, never another member's data.", "Every trait shows its window: 26 weeks, 38 receipts."] },
+    { screen: "basket", label: "Basket", status: ["part", "Prototype: category mix"], status2: ["vision", "Vision: HSR from product data"],
+      title: "Health insight about the basket, not the person.",
+      say: "Category mix and Health Star Ratings come straight from product data. NeedSmart describes trends; it never judges or advises.",
+      notice: ["Ratings cover rated products only and say so.", "Trends compare quarters, so one party week doesn't skew the picture.", "No diet or medical advice, anywhere in the app."] }
+  ];
+  let cur = 0;
+  function pill(p) { return p ? `<span class="pill ${p[0]}">${p[1]}</span>` : ""; }
+  function show(i, opts = {}) {
+    cur = (i + tour.length) % tour.length;
+    const t = tour[cur];
+    $$(".screen").forEach(s => s.hidden = s.id !== "scr-" + t.screen);
+    $$(".p-tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.screen === t.screen)));
+    $$(".step-btn").forEach((b, k) => b.setAttribute("aria-pressed", String(k === cur)));
+    $("#n-status").innerHTML = pill(t.status) + pill(t.status2);
+    $("#n-title").textContent = t.title;
+    $("#n-say").textContent = t.say;
+    $("#n-notice").innerHTML = t.notice.map((n, k) => `<li data-n="0${k + 1}">${n}</li>`).join("");
+    $("#next").textContent = cur === tour.length - 1 ? "Back to start" : "Next: " + tour[cur + 1].label;
+    $("#pbody").scrollTop = 0;
+    if (opts.focusTab) $(`.p-tab[data-screen="${t.screen}"]`).focus();
+  }
+  $("#steps").innerHTML = tour.map((t, i) => `<button type="button" class="step-btn" aria-pressed="false" data-i="${i}"><span class="num">0${i + 1}</span>${t.label}</button>`).join("");
+  $$(".step-btn").forEach(b => b.addEventListener("click", () => show(+b.dataset.i)));
+  $$(".p-tab").forEach(b => b.addEventListener("click", () => show(tour.findIndex(t => t.screen === b.dataset.screen))));
+  $$("[data-go]").forEach(b => b.addEventListener("click", () => show(tour.findIndex(t => t.screen === b.dataset.go))));
+  $("#next").addEventListener("click", () => show(cur + 1));
+  $("#prev").addEventListener("click", () => show(cur - 1));
+  // Arrow keys step the tour while the prototype is on screen (presenter convenience).
+  document.addEventListener("keydown", e => {
+    if (e.target.closest && e.target.closest("input, textarea, select")) return;
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const r = $("#prototype").getBoundingClientRect();
+    if (r.top > innerHeight * 0.6 || r.bottom < innerHeight * 0.4) return;
+    e.preventDefault();
+    show(cur + (e.key === "ArrowRight" ? 1 : -1));
+  });
+
+  /* ---------- Gaps, each paired with a proposed fix ---------- */
+  const gaps = [
+    { gap: "Reminders aren't precise enough yet", why: "Early backtests: grouping by need finds more of what households buy than a per-product baseline, but it also raises more reminders that turn out wrong. Wrong reminders cost trust.",
+      fix: "Only call an item \"due\" with strong evidence; everything else goes to \"Maybe\".", more: ["One-tap \"Have it\" / \"Not needed\" feedback that retrains each household's timing", "Seasonal and cohort priors from aggregate sales to stabilise sparse histories", "Exit test in discovery: beat the baseline on both hit rate and false reminders"], status: ["part", "Fix designed"] },
+    { gap: "Purchases elsewhere are invisible", why: "If a household buys milk at a corner shop, the model sees a gap and may nag. Under-counted needs look like misses.",
+      fix: "Treat a dismissed reminder as a purchase signal, not an error.", more: ["\"Bought elsewhere\" quick tap pushes the next due date", "Lapse rule already stops reminders for patterns that go quiet", "Show coverage honestly: \"based on purchases with us\""], status: ["built", "Lapse rule in prototype"] },
+    { gap: "Competitor prices", why: "The original prototype compared two retailers. An internal product won't send members to a competitor, but members will still wonder.",
+      fix: "Recommend: optimise within our range and measure savings against the member's own usual price.", more: ["Best value = specials, multi-buys, pack size, timing and own-brand swaps", "Optional later: use existing price-match signals to say \"you're getting a fair price\"", "Decision needed on how, or whether, competitor pricing appears"], status: ["vision", "Needs a product decision"] },
+    { gap: "Where should personalisation run?", why: "We hold the full purchase history, so building every list centrally looks simpler. But it creates a new store of sensitive predictions, like when a household will need nappies.",
+      fix: "Recommend: learn centrally, personalise on the phone. Train on de-identified history; work out each member's list on their device from their eReceipts.", more: ["We never hold a profile of predicted needs: less to protect, nothing new to leak", "Almost no per-member compute cost, and it works offline in store", "Model quality is unchanged, because training stays central"], status: ["vision", "Needs a product decision"] },
+    { gap: "No nutrition data in the prototype", why: "The prototype only had receipt text, so it couldn't rate the basket. Category mix alone can't stand in for nutrition.",
+      fix: "Use Health Star Ratings from our product master, linked by product ID.", more: ["Show ratings for rated products only, with coverage stated", "Keep the \"basket, not person\" rule: no diet or medical advice", "Decision needed with nutrition and legal on wording"], status: ["vision", "Needs a product decision"] },
+    { gap: "Product names are messy", why: "The prototype matched printed receipt names to need-groups by text rules. It works, but a few percent of items stay unmapped.",
+      fix: "Map product IDs through our product hierarchy instead of parsing names.", more: ["Need-group map built once in the cloud and shipped as a pack", "Review queue for new products, same as the prototype's override loop"], status: ["built", "Review loop in prototype"] },
+    { gap: "\"Was price\" savings can mislead", why: "A shelf discount isn't a saving if the household never pays full price for that item.",
+      fix: "Two separate numbers, always labelled: saving vs your usual, and the shelf's was-price.", more: ["Number-checker recomputes every figure; failures are withheld", "Realised savings confirmed from the next receipt"], status: ["built", "Checker in prototype"] },
+    { gap: "Impact is easy to overstate", why: "Comparing against a best-seller's shelf price makes savings look bigger, because many households already buy cheaper than average. A PM can't approve on numbers that won't survive a pilot.",
+      fix: "Headline savings against each household's own usual price. Prove them before launch by replaying past receipts.", more: ["Discovery: replay 6 months of opted-in staff receipts through NeedSmart", "Pilot: compare with a matched control group that doesn't use NeedSmart", "Typical-shopper figures only ever appear labelled, never as the member's saving"], status: ["part", "Fix designed"] },
+    { gap: "On-device AI can be unreliable", why: "Small phone-sized models are weaker at choosing tools and doing arithmetic.",
+      fix: "The model only routes the question and phrases the answer. Tools do all the maths.", more: ["Number-checker gates every answer, or it declines", "Suggested question chips work even with no model", "Assistant ships last, after the core list proves itself"], status: ["part", "Fix designed"] }
+  ];
+  $("#gap-list").innerHTML = gaps.map(g => `
+    <article class="gap">
+      <div class="gap-l"><span class="k">Gap</span><h3>${g.gap}</h3><p>${g.why}</p></div>
+      <div class="gap-mid" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="gap-r"><span class="k">Proposed fix</span><p><b>${g.fix}</b></p><ul>${g.more.map(m => `<li>${m}</li>`).join("")}</ul><div class="status-row">${pill(g.status)}</div></div>
+    </article>`).join("");
+
+  /* ---------- Active section in the top nav ---------- */
+  const links = $$(".nav a");
+  const secs = links.map(a => $(a.getAttribute("href")));
+  function markNav() {
+    const y = innerHeight * 0.35;
+    let on = -1;
+    secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top <= y) on = i; });
+    links.forEach((a, i) => a.classList.toggle("on", i === on));
+  }
+  addEventListener("scroll", markNav, { passive: true });
+
+  renderAll();
+  renderImpact();
+  renderChips();
+  show(0);
+  markNav();
+})();
+</script>

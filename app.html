@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NeedSmart App Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: an app shell. Desktop: sidebar + scrolling main. Phone: top bar + content + bottom tabs.
+   Same tokens as the vision page so the two read as one product. */
+:root {
+  --bg: #f3f5f2; --surface: #ffffff; --surface-2: #e9eee9; --fg: #16212a; --muted: #56646c; --line: #cfd8d1;
+  --accent: #1b6f52; --accent-ink: #ffffff; --accent-soft: #d8ede2; --warn: #a4501f; --warn-soft: #f7e4d6;
+  --info: #2e5d8a; --info-soft: #dde8f3; --shadow: rgba(14, 28, 22, 0.16);
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1215; --surface: #161f24; --surface-2: #1e292f; --fg: #e4ebe6; --muted: #98a8a0; --line: #2c3a40;
+    --accent: #4cbd8c; --accent-ink: #08150f; --accent-soft: #163a2b; --warn: #e69264; --warn-soft: #3b2418;
+    --info: #7fb0dd; --info-soft: #1a2b3b; --shadow: rgba(0, 0, 0, 0.5); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1215; --surface: #161f24; --surface-2: #1e292f; --fg: #e4ebe6; --muted: #98a8a0; --line: #2c3a40;
+  --accent: #4cbd8c; --accent-ink: #08150f; --accent-soft: #163a2b; --warn: #e69264; --warn-soft: #3b2418;
+  --info: #7fb0dd; --info-soft: #1a2b3b; --shadow: rgba(0, 0, 0, 0.5); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; letter-spacing: -0.015em; line-height: 1.15; text-wrap: balance; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+a { color: var(--accent); }
+:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* ---------- Shell ---------- */
+.demo-bar { position: sticky; top: 0; z-index: 30; background: var(--fg); color: var(--bg); font-size: 12.5px; padding: calc(6px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 6px max(16px, env(safe-area-inset-left, 0px)); display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+.demo-bar a { color: var(--bg); font-weight: 700; text-decoration: none; white-space: nowrap; }
+.demo-bar span { opacity: .85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: calc(100vh - 32px); }
+.side { position: sticky; top: 32px; height: calc(100vh - 32px); border-right: 1px solid var(--line); background: var(--surface); padding: 20px 14px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 20px; padding: 0 6px; }
+.brand-mark { width: 30px; height: 30px; border-radius: 9px; background: var(--accent); display: grid; place-items: center; flex-shrink: 0; }
+.brand-mark svg { width: 17px; height: 17px; }
+.hh { background: var(--surface-2); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+.hh b { font-size: 14.5px; }
+.hh span { font-size: 12.5px; color: var(--muted); }
+.hh button { margin-top: 8px; background: none; border: 0; padding: 0; color: var(--accent); font-weight: 700; font-size: 12.5px; cursor: pointer; text-align: left; }
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14.5px; }
+.nav a svg { width: 20px; height: 20px; flex-shrink: 0; }
+.nav a:hover { background: var(--surface-2); color: var(--fg); }
+.nav a.on { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.side .foot { margin-top: auto; font-size: 12px; color: var(--muted); padding: 0 6px; display: flex; flex-direction: column; gap: 6px; }
+.side .foot b { color: var(--accent); }
+.main { min-width: 0; padding: 28px max(28px, env(safe-area-inset-right, 0px)) 48px 28px; }
+.topbar { display: none; }
+.tabs { display: none; }
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; }
+  .side { display: none; }
+  .topbar { display: flex; position: sticky; top: 32px; z-index: 20; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); align-items: center; justify-content: space-between; gap: 10px; }
+  .topbar .brand { font-size: 18px; padding: 0; }
+  .topbar .brand-mark { width: 26px; height: 26px; }
+  .topbar button { background: var(--surface-2); border: 0; border-radius: 999px; padding: 6px 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; max-width: 55vw; overflow: hidden; text-overflow: ellipsis; }
+  .main { padding: 18px max(16px, env(safe-area-inset-right, 0px)) calc(96px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+  .tabs { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--surface); border-top: 1px solid var(--line); padding: 6px max(6px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(6px, env(safe-area-inset-left, 0px)); }
+  .tabs a { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 500; color: var(--muted); text-decoration: none; padding: 5px 0; }
+  .tabs a svg { width: 22px; height: 22px; }
+  .tabs a.on { color: var(--accent); font-weight: 700; }
+}
+
+/* ---------- Common ---------- */
+.page { display: flex; flex-direction: column; gap: 22px; max-width: 1160px; }
+.ph { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.ph h1 { font-size: clamp(26px, 3.4vw, 36px); font-weight: 800; }
+.ph p { color: var(--muted); font-size: 14.5px; margin-top: 4px; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1100px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kpi .k { font-size: 12.5px; color: var(--muted); }
+.kpi .v { font-family: var(--font-display); font-size: clamp(22px, 2.6vw, 28px); font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.kpi .s { font-size: 12px; color: var(--muted); }
+.kpi.hero { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.kpi.hero .k, .kpi.hero .s { color: var(--accent-ink); opacity: .88; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card h3 { font-size: 17px; }
+.card .cap { font-size: 13px; color: var(--muted); margin-top: -6px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.cols2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 1100px) { .cols, .cols2 { grid-template-columns: 1fr; } }
+.btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 999px; font-weight: 700; font-size: 14px; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; text-decoration: none; }
+.btn.solid { background: var(--accent); color: var(--accent-ink); }
+.btn svg { width: 16px; height: 16px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 11px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.steady { color: var(--accent); background: var(--accent-soft); }
+.pill.some { color: var(--info); background: var(--info-soft); }
+.pill.irr { color: var(--warn); background: var(--warn-soft); }
+.pill.neutral { color: var(--muted); background: var(--surface-2); }
+.save { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 7px; white-space: nowrap; }
+.seg { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--accent); box-shadow: 0 2px 8px -4px var(--shadow); }
+.note { font-size: 12.5px; color: var(--muted); }
+.check { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 11px; color: var(--accent); }
+.check svg { width: 12px; height: 12px; }
+
+/* ---------- Plan ---------- */
+.grp { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 6px; }
+.item { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--line); }
+.item input { appearance: none; width: 22px; height: 22px; border: 1.8px solid var(--line); border-radius: 7px; margin: 1px 0 0; cursor: pointer; display: grid; place-items: center; background: var(--surface); }
+.item input:checked { background: var(--accent); border-color: var(--accent); }
+.item input:checked::after { content: ""; width: 10px; height: 5px; border: 2px solid var(--accent-ink); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.item.done .nm { text-decoration: line-through; color: var(--muted); }
+.item .body { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.item .nm { font-weight: 700; font-size: 15px; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; }
+.item .nm:hover { color: var(--accent); }
+.item .prod { font-size: 13px; }
+.item .why { font-size: 12px; color: var(--muted); }
+.item .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 3px; }
+.item .right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.item .px { font-family: var(--font-mono); font-weight: 600; font-size: 14px; }
+.item .unit { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+.swap { grid-column: 2 / -1; border: 1.5px dashed var(--accent); border-radius: 12px; padding: 10px 12px; background: var(--accent-soft); display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.swap .t { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: .05em; text-transform: uppercase; }
+.swap p { font-size: 13.5px; }
+.swap .b { display: flex; gap: 8px; flex-wrap: wrap; }
+.swap button { border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 700; cursor: pointer; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); }
+.swap button.primary { background: var(--accent); color: var(--accent-ink); }
+.empty { font-size: 13.5px; color: var(--muted); padding: 10px 0; border-top: 1px solid var(--line); }
+.agenda { display: flex; flex-direction: column; }
+.ag { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 10px; padding: 8px 10px; border-top: 1px solid var(--line); font-size: 13.5px; }
+.ag:first-child { border-top: 0; }
+.ag .dl { font-family: var(--font-mono); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; }
+.ag.shop { background: var(--accent-soft); border-radius: 10px; border-top-color: transparent; }
+.ag.shop + .ag { border-top-color: transparent; }
+.ag.shop .dl { color: var(--accent); }
+.ag .dl b { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; }
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.day { border: 1px solid var(--line); border-radius: 10px; padding: 7px 6px; min-height: 84px; display: flex; flex-direction: column; gap: 4px; background: var(--bg); }
+.day.shop { border: 2px solid var(--accent); background: var(--accent-soft); }
+.day .dl { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+.day.shop .dl { color: var(--accent); font-weight: 600; }
+.day i { font-style: normal; font-size: 11px; line-height: 1.25; background: var(--surface); border-radius: 5px; padding: 2px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.budget { display: flex; flex-direction: column; gap: 6px; }
+.btrack { height: 12px; border-radius: 99px; background: var(--surface-2); overflow: hidden; display: flex; }
+.btrack i { display: block; height: 100%; background: var(--accent); }
+.btrack i.over { background: var(--warn); }
+.brow { display: flex; justify-content: space-between; font-size: 13px; }
+.brow b { font-family: var(--font-mono); }
+
+/* ---------- Needs ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ntable { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.ntable table { min-width: 720px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; background: var(--surface-2); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tbody tr.row { cursor: pointer; }
+tbody tr.row:hover td { background: var(--surface-2); }
+.ncards { display: none; flex-direction: column; gap: 10px; }
+.ncard { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; cursor: pointer; text-align: left; width: 100%; }
+.ncard b { font-size: 15px; }
+.ncard .sub { font-size: 12.5px; color: var(--muted); grid-column: 1 / -1; }
+@media (max-width: 700px) { .ntable { display: none; } .ncards { display: flex; } }
+
+/* ---------- Drawer ---------- */
+.scrim { position: fixed; inset: 0; background: rgba(5, 10, 8, .45); z-index: 40; }
+.drawer { position: fixed; z-index: 41; top: 0; right: 0; bottom: 0; width: min(480px, 100%); background: var(--surface); border-left: 1px solid var(--line); box-shadow: -20px 0 40px -20px var(--shadow); overflow-y: auto; padding: calc(18px + env(safe-area-inset-top, 0px)) max(22px, env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) 22px; display: flex; flex-direction: column; gap: 16px; animation: slide .25s ease-out; }
+@keyframes slide { from { transform: translateX(30px); opacity: 0; } }
+@media (max-width: 700px) {
+  .drawer { top: auto; left: 0; width: 100%; max-height: 88vh; border-left: 0; border-top: 1px solid var(--line); border-radius: 22px 22px 0 0; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); animation: rise .25s ease-out; }
+  @keyframes rise { from { transform: translateY(40px); opacity: 0; } }
+}
+.dh { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.dh h2 { font-size: 24px; }
+.dh .x { background: var(--surface-2); border: 0; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 18px; line-height: 1; flex-shrink: 0; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.stats div { background: var(--surface); padding: 9px 11px; display: flex; flex-direction: column; gap: 1px; }
+.stats span { font-size: 11.5px; color: var(--muted); }
+.stats b { font-family: var(--font-mono); font-size: 14px; }
+.hist { display: flex; flex-direction: column; }
+.hist div { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 10px; font-size: 13px; padding: 6px 0; border-top: 1px solid var(--line); }
+.hist .d { color: var(--muted); font-family: var(--font-mono); font-size: 12px; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); font-size: 14px; }
+.sw { appearance: none; width: 44px; height: 26px; border-radius: 99px; background: var(--line); position: relative; cursor: pointer; flex-shrink: 0; margin: 0; }
+.sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); transition: left .15s; }
+.sw:checked { background: var(--accent); }
+.sw:checked::after { left: 21px; }
+.sw:disabled { opacity: .5; cursor: not-allowed; }
+.explain { font-size: 14px; background: var(--info-soft); border-radius: 12px; padding: 12px 14px; }
+
+/* ---------- Charts ---------- */
+.chart svg { display: block; width: 100%; height: auto; }
+.chart text { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
+.chart .gl { stroke: var(--line); stroke-width: 1; }
+.chart .bar { fill: var(--accent); }
+.chart .bar.alt { fill: color-mix(in srgb, var(--accent) 40%, var(--surface-2)); }
+.chart .bar.over { fill: var(--warn); }
+.chart .ln { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; }
+.chart .ln2 { fill: none; stroke: var(--info); stroke-width: 2; stroke-dasharray: 5 4; }
+.chart .dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.chart .hit { fill: transparent; cursor: default; }
+.chart .hit:hover + .bar, .chart .hit:hover ~ .hl { opacity: .8; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend span::before { content: ""; width: 12px; height: 4px; border-radius: 2px; background: var(--c); }
+.tip { position: fixed; z-index: 60; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 12.5px; padding: 6px 10px; border-radius: 8px; max-width: 240px; box-shadow: 0 8px 20px -8px var(--shadow); }
+.hbars { display: flex; flex-direction: column; gap: 8px; }
+.hbar { display: grid; grid-template-columns: 120px minmax(0, 1fr) 46px; gap: 10px; align-items: center; font-size: 13.5px; }
+.hbar .tr { height: 12px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.hbar .tr i { display: block; height: 100%; background: var(--accent); border-radius: 0 4px 4px 0; }
+.hbar .v { font-family: var(--font-mono); font-size: 12.5px; text-align: right; }
+.stack { display: flex; height: 18px; border-radius: 6px; overflow: hidden; gap: 2px; }
+.stack i { display: block; height: 100%; }
+.legend2 { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted); }
+.legend2 span { display: inline-flex; align-items: center; gap: 6px; }
+.legend2 span::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--c); }
+.persona { border-radius: 16px; padding: 16px; background: var(--info-soft); display: flex; flex-direction: column; gap: 4px; }
+.persona .k { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--info); }
+.persona .v { font-family: var(--font-display); font-size: 24px; font-weight: 800; }
+.trait { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+.trait b { font-size: 14px; }
+.trait .n { font-family: var(--font-mono); font-weight: 600; color: var(--accent); }
+.trait .d { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); }
+.meter { height: 10px; border-radius: 99px; background: var(--surface-2); position: relative; overflow: hidden; }
+.meter i { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 99px; }
+.meter b { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--fg); }
+
+/* ---------- Ask ---------- */
+.chat { display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 78%; padding: 11px 14px; border-radius: 16px; font-size: 14.5px; }
+@media (max-width: 700px) { .msg { max-width: 92%; } }
+.msg.me { align-self: flex-end; background: var(--accent); color: var(--accent-ink); border-bottom-right-radius: 5px; }
+.msg.bot { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 5px; display: flex; flex-direction: column; gap: 8px; }
+.msg.bot.refuse { background: var(--warn-soft); border-color: transparent; }
+.msg .tools { font-family: var(--font-mono); font-size: 11px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 6px; display: flex; flex-direction: column; gap: 2px; }
+.typing { display: inline-flex; gap: 4px; padding: 4px 0; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+.qchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.qchip { background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: 13.5px; cursor: pointer; text-align: left; }
+.qchip:hover { border-color: var(--accent); color: var(--accent); }
+.qchip[disabled] { opacity: .45; cursor: default; }
+
+/* ---------- Welcome ---------- */
+.welcome { position: fixed; inset: 0; z-index: 50; background: var(--bg); overflow-y: auto; padding: calc(40px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)); }
+.wwrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px; }
+.welcome h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; letter-spacing: -0.03em; }
+.welcome h1 em { font-style: normal; color: var(--accent); }
+.welcome .lede { color: var(--muted); font-size: 17px; max-width: 60ch; }
+.personas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 820px) { .personas { grid-template-columns: 1fr; } }
+.pcard { text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 8px; cursor: pointer; transition: border-color .15s, transform .15s; }
+.pcard:hover { border-color: var(--accent); transform: translateY(-2px); }
+.pcard .av { width: 44px; height: 44px; border-radius: 14px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 18px; }
+.pcard h3 { font-size: 20px; }
+.pcard p { font-size: 14px; color: var(--muted); }
+.pcard .tagrow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.pcard .go { margin-top: auto; padding-top: 6px; font-weight: 700; color: var(--accent); font-size: 14px; }
+.wfoot { font-size: 13px; color: var(--muted); }
+.analyse { max-width: 520px; margin: 8vh auto 0; display: flex; flex-direction: column; gap: 18px; }
+.analyse h2 { font-size: 28px; }
+.steps { display: flex; flex-direction: column; gap: 10px; }
+.stepx { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 12px; align-items: center; font-size: 15px; opacity: .35; transition: opacity .3s; }
+.stepx.on { opacity: 1; }
+.stepx .ic { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; }
+.stepx.on .ic { background: var(--accent); border-color: var(--accent); }
+.stepx.on .ic::after { content: ""; width: 9px; height: 5px; border: 2px solid var(--accent-ink); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.stepx b { font-family: var(--font-mono); color: var(--accent); }
+.prog { height: 6px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.prog i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .35s; }
+.toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 9px 16px; border-radius: 999px; font-size: 13.5px; z-index: 70; }
+@media (min-width: 901px) { .toast { bottom: 28px; } }
+</style>
+</head>
+<body>
+<div class="demo-bar"><span>Demo · synthetic household · nothing here is real data</span><a href="index.html">← Back to the story</a></div>
+
+<div class="shell">
+  <aside class="side" aria-label="Main">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg></span>NeedSmart</div>
+    <div class="hh" id="hh-side"></div>
+    <nav class="nav" id="nav-side"></nav>
+    <div class="foot"><span>Worked out on this device from your receipts. <b>Nothing is sent anywhere.</b></span><span>Demo data only.</span></div>
+  </aside>
+
+  <div>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg></span>NeedSmart</div>
+      <button type="button" id="hh-top" aria-label="Switch demo household"></button>
+    </header>
+    <main class="main" id="main"></main>
+  </div>
+</div>
+<nav class="tabs" id="nav-tabs" aria-label="Main"></nav>
+
+<div class="welcome" id="welcome" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="d-title"></aside>
+<div class="tip" id="tip" hidden role="tooltip"></div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const money = c => (c < 0 ? "−$" : "$") + (Math.abs(c) / 100).toFixed(2);
+  const money0 = c => "$" + Math.round(c / 100).toLocaleString("en-AU");
+  const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+
+  /* ---------- Dates: "today" is fixed so the demo is the same for everyone ---------- */
+  const TODAY = Date.UTC(2026, 10, 24); // Tue 24 Nov 2026
+  const SHOP = 2;                        // next shop: Thu 26 Nov
+  const dayDate = d => new Date(TODAY + d * 864e5);
+  const fmt = (d, o) => dayDate(d).toLocaleDateString("en-AU", Object.assign({ timeZone: "UTC" }, o));
+  const fmtShort = d => fmt(d, { weekday: "short", day: "numeric", month: "short" });
+  const fmtDM = d => fmt(d, { day: "numeric", month: "short" });
+
+  /* ---------- Seeded random so each demo household is stable ---------- */
+  function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const median = a => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length ? (s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2) : 0; };
+  const regularity = gaps => { const md = median(gaps); return md ? median(gaps.map(g => Math.abs(g - md))) / md : 1; };
+  const tierOf = s => s <= 0.25 ? ["steady", "Steady"] : s <= 0.75 ? ["some", "Somewhat regular"] : ["irr", "Irregular"];
+
+  /* ---------- Demo households. Prices in cents. brands[0] is the usual brand. ---------- */
+  // loyal: only the usual brand is acceptable. wild: irregular buying. hsr: Health Star Rating (null = not rated).
+  const PERSONAS = [
+    { id: "rivera", seed: 11, name: "Rivera household", who: "Alex, Jordan and two kids", size: 4, budget: 22000, short: "R", shopDays: [4, 0],
+      blurb: "A family of four with a big Saturday shop and steady staples.", tags: ["Steady", "Stocks up on specials"], pct: 64,
+      needs: [
+        { n: "Milk", pack: "3L", cat: "Dairy & eggs", cy: 5, j: 1, hsr: 4, brands: [["Own brand", 465, 1]] },
+        { n: "Bread", pack: "Wholemeal 700g", cat: "Bakery", cy: 6, j: 1, hsr: 4, brands: [["Brand A", 450], ["Brand B", 430], ["Own brand", 320, 1]] },
+        { n: "Greek yoghurt", pack: "1kg", cat: "Dairy & eggs", cy: 9, j: 1, hsr: 4.5, brands: [["Brand G", 720], ["Own brand", 500, 1]] },
+        { n: "Kids' yoghurt pouches", pack: "6 pack", cat: "Dairy & eggs", cy: 4, j: 1, hsr: 3.5, loyal: 1, brands: [["Brand K", 600]] },
+        { n: "Bananas", pack: "~1.2kg", cat: "Fruit & veg", cy: 7, j: 1, hsr: 5, brands: [["Bananas", 468]] },
+        { n: "Apples", pack: "1kg", cat: "Fruit & veg", cy: 7, j: 2, hsr: 5, brands: [["Apples", 550]] },
+        { n: "Free range eggs", pack: "12 pack", cat: "Dairy & eggs", cy: 8, j: 1, hsr: 5, loyal: 1, must: "Free range", brands: [["Brand E", 650], ["Own brand", 540, 1]] },
+        { n: "Coffee beans", pack: "1kg", cat: "Drinks", cy: 24, j: 2, hsr: null, loyal: 1, brands: [["Brand X", 2700], ["Brand Y", 2500]] },
+        { n: "Chicken breast", pack: "1kg", cat: "Meat & fish", cy: 8, j: 2, hsr: 5, brands: [["Chicken breast", 1300]] },
+        { n: "Pasta", pack: "500g", cat: "Pantry", cy: 14, j: 2, hsr: 4, brands: [["Brand A", 200], ["Brand B", 240], ["Own brand", 120, 1]] },
+        { n: "Cheese", pack: "500g block", cat: "Dairy & eggs", cy: 12, j: 2, hsr: 3, brands: [["Brand C", 850], ["Own brand", 650, 1]] },
+        { n: "Breakfast cereal", pack: "500g", cat: "Pantry", cy: 10, j: 3, hsr: 4, brands: [["Brand Q", 650], ["Own brand", 380, 1]] },
+        { n: "Chips", pack: "175g", cat: "Snacks", cy: 9, j: 6, hsr: 1.5, wild: 1, brands: [["Brand S", 450], ["Own brand", 250, 1]] },
+        { n: "Dishwasher tablets", pack: "60 pack", cat: "Household", cy: 30, j: 6, hsr: null, brands: [["Brand D", 2400], ["Own brand", 1400, 1]] },
+        { n: "Laundry liquid", pack: "2L", cat: "Household", cy: 28, j: 5, hsr: null, loyal: 1, brands: [["Brand L", 1800], ["Own brand", 1100, 1]] },
+        { n: "Toilet paper", pack: "24 pack", cat: "Household", cy: 30, j: 20, hsr: null, wild: 1, brands: [["Brand T", 1500], ["Own brand", 1100, 1]] }
+      ] },
+    { id: "sam", seed: 23, name: "Sam", who: "Lives alone, shops after work", size: 1, budget: 9000, short: "S", shopDays: [1, 3, 5],
+      blurb: "Small, frequent top-up shops. Some habits steady, some not.", tags: ["Mixed", "Top-up shopper"], pct: 48,
+      needs: [
+        { n: "Milk", pack: "1L", cat: "Dairy & eggs", cy: 4, j: 1, hsr: 4, brands: [["Own brand", 160, 1]] },
+        { n: "Bread", pack: "Sourdough 650g", cat: "Bakery", cy: 8, j: 3, hsr: 3.5, brands: [["Brand A", 520], ["Own brand", 380, 1]] },
+        { n: "Coffee pods", pack: "10 pack", cat: "Drinks", cy: 7, j: 1, hsr: null, loyal: 1, brands: [["Brand P", 700], ["Brand Q", 600]] },
+        { n: "Frozen meals", pack: "single", cat: "Frozen", cy: 5, j: 2, hsr: 3, brands: [["Brand F", 750], ["Brand G", 700], ["Own brand", 500, 1]] },
+        { n: "Bananas", pack: "~600g", cat: "Fruit & veg", cy: 8, j: 2, hsr: 5, brands: [["Bananas", 240]] },
+        { n: "Eggs", pack: "6 pack", cat: "Dairy & eggs", cy: 12, j: 4, hsr: 5, brands: [["Brand E", 420], ["Own brand", 330, 1]] },
+        { n: "Instant noodles", pack: "5 pack", cat: "Pantry", cy: 12, j: 7, hsr: 2, wild: 1, brands: [["Brand N", 350], ["Own brand", 220, 1]] },
+        { n: "Sparkling water", pack: "10 pack", cat: "Drinks", cy: 14, j: 4, hsr: null, brands: [["Brand W", 650], ["Own brand", 400, 1]] },
+        { n: "Chocolate", pack: "180g", cat: "Snacks", cy: 9, j: 7, hsr: 1, wild: 1, brands: [["Brand H", 500], ["Own brand", 300, 1]] },
+        { n: "Toilet paper", pack: "12 pack", cat: "Household", cy: 40, j: 10, hsr: null, brands: [["Brand T", 900], ["Own brand", 650, 1]] }
+      ] },
+    { id: "patel", seed: 37, name: "Patel household", who: "Priya and Dev, cook most nights", size: 2, budget: 14000, short: "P", shopDays: [4, 6],
+      blurb: "Budget-focused cooks who happily switch brands for value.", tags: ["Steady", "Brand-flexible"], pct: 78,
+      needs: [
+        { n: "Milk", pack: "2L", cat: "Dairy & eggs", cy: 6, j: 1, hsr: 4, brands: [["Own brand", 310, 1]] },
+        { n: "Natural yoghurt", pack: "1kg", cat: "Dairy & eggs", cy: 7, j: 1, hsr: 4.5, brands: [["Brand G", 600], ["Own brand", 400, 1]] },
+        { n: "Basmati rice", pack: "5kg", cat: "Pantry", cy: 35, j: 4, hsr: 4, brands: [["Brand R", 1500], ["Own brand", 1100, 1]] },
+        { n: "Red lentils", pack: "500g", cat: "Pantry", cy: 14, j: 2, hsr: 5, brands: [["Brand L", 300], ["Own brand", 200, 1]] },
+        { n: "Onions", pack: "2kg", cat: "Fruit & veg", cy: 10, j: 2, hsr: 5, brands: [["Onions", 350]] },
+        { n: "Tomatoes", pack: "1kg", cat: "Fruit & veg", cy: 6, j: 1, hsr: 5, brands: [["Tomatoes", 600]] },
+        { n: "Spinach", pack: "280g", cat: "Fruit & veg", cy: 5, j: 1, hsr: 5, brands: [["Spinach", 300]] },
+        { n: "Chicken thigh", pack: "1kg", cat: "Meat & fish", cy: 9, j: 2, hsr: 4.5, brands: [["Chicken thigh", 1200]] },
+        { n: "Tea bags", pack: "100 pack", cat: "Drinks", cy: 30, j: 4, hsr: null, loyal: 1, brands: [["Brand T", 750], ["Own brand", 450, 1]] },
+        { n: "Cooking oil", pack: "2L", cat: "Pantry", cy: 25, j: 4, hsr: null, brands: [["Brand O", 900], ["Own brand", 650, 1]] },
+        { n: "Dishwashing liquid", pack: "1L", cat: "Household", cy: 30, j: 8, hsr: null, brands: [["Brand D", 450], ["Own brand", 250, 1]] },
+        { n: "Biscuits", pack: "250g", cat: "Snacks", cy: 12, j: 9, hsr: 1.5, wild: 1, brands: [["Brand B", 350], ["Own brand", 200, 1]] }
+      ] }
+  ];
+
+  /* ---------- Build a household's whole picture from generated receipts ---------- */
+  function build(P) {
+    const r = rng(P.seed);
+    const ri = (a, b) => a + Math.floor(r() * (b - a + 1));
+    // Specials for a given week index (0 = this week). Stable per household and week.
+    const specialFor = (needIdx, week) => {
+      const rr = rng(P.seed * 1000 + needIdx * 37 + (week + 50) * 7);
+      const N = P.needs[needIdx];
+      if (rr() > (week === 0 ? 0.42 : 0.3)) return null;
+      const b = Math.floor(rr() * N.brands.length);
+      const off = [0.15, 0.2, 0.25, 0.3][Math.floor(rr() * 4)];
+      return { b, price: Math.round(N.brands[b][1] * (1 - off) / 10) * 10 };
+    };
+    // Purchases land on the household's shop days, so needs share receipts like real trips do.
+    const weekday = d => ((2 + d) % 7 + 7) % 7; // TODAY is a Tuesday (0 = Sunday)
+    const snap = d => { for (const o of [0, -1, 1, -2, 2, -3, 3]) if (P.shopDays.includes(weekday(d + o))) return d + o; return d; };
+    const needs = P.needs.map((N, i) => {
+      // Purchase history over 26 weeks, ending before today.
+      const hist = [];
+      let d = snap(-182 + ri(0, N.cy - 1));
+      while (d <= -1) {
+        const wk = Math.floor(d / 7);
+        const sp = specialFor(i, wk);
+        let b = 0;
+        if (N.brands.length > 1 && !N.loyal) {
+          if (sp && r() < 0.7) b = sp.b; else b = r() < 0.55 ? 0 : ri(0, N.brands.length - 1);
+        } else if (N.brands.length > 1 && N.loyal) { b = r() < 0.08 ? 1 : 0; }
+        const onSp = sp && sp.b === b;
+        hist.push({ day: d, b, price: onSp ? sp.price : N.brands[b][1], special: !!onSp });
+        const gap = N.wild ? (r() < 0.5 ? ri(2, Math.max(3, Math.round(N.cy * 0.4))) : ri(Math.round(N.cy * 1.4), N.cy * 3)) : N.cy + ri(-N.j, N.j);
+        d = snap(d + Math.max(1, gap));
+        if (d <= hist[hist.length - 1].day) d = snap(hist[hist.length - 1].day + 2);
+      }
+      const days = hist.map(h => h.day);
+      const gaps = days.slice(1).map((x, k) => x - days[k]);
+      const score = regularity(gaps);
+      const med = Math.round(median(gaps));
+      const last = days[days.length - 1];
+      // Brand behaviour: switch rate between consecutive buys (only meaningful with 2+ brands).
+      const switches = hist.slice(1).filter((h, k) => h.b !== hist[k].b).length;
+      const indiff = N.brands.length > 1 ? switches / Math.max(1, hist.length - 1) : null;
+      const counts = N.brands.map((_, k) => hist.filter(h => h.b === k).length);
+      const usualB = counts.indexOf(Math.max(...counts));
+      const regularPaid = hist.filter(h => h.b === usualB && !h.special).map(h => h.price);
+      const usual = regularPaid.length ? Math.round(median(regularPaid)) : N.brands[usualB][1];
+      return { i, ...N, hist, gaps, score, tier: tierOf(score), med, last, next: last + med, indiff, usualB, usual,
+        flexible: N.brands.length > 1 && !N.loyal, special: specialFor(i, 0) };
+    });
+    // Twelve past weeks of using NeedSmart (illustrative performance).
+    const perf = [];
+    for (let w = 12; w >= 1; w--) {
+      const reminded = ri(Math.round(needs.length * 0.45), Math.round(needs.length * 0.65));
+      const learn = 0.68 + (12 - w) * 0.016 + (r() - 0.5) * 0.06;
+      const bought = Math.min(reminded, Math.round(reminded * learn));
+      const saved = Math.round((P.budget * (0.035 + (12 - w) * 0.0025) + (r() - 0.5) * P.budget * 0.02));
+      const spend = Math.round(P.budget * (1.0 - (12 - w) * 0.012 + (r() - 0.5) * 0.12)); // drifts under budget as the plan settles in
+      const swapsOffered = ri(1, 3), swapsKept = ri(0, swapsOffered);
+      perf.push({ day: SHOP - w * 7, reminded, bought, saved, typical: Math.round(saved * 1.38), spend, swapsOffered, swapsKept });
+    }
+    const receipts = new Set(needs.flatMap(n => n.days || n.hist.map(h => h.day))).size;
+    return { P, needs, perf, receipts };
+  }
+
+  /* ---------- App state ---------- */
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("ns-demo-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem("ns-demo-" + k, JSON.stringify(v)); } catch (e) { /* storage unavailable: keep in memory only */ } }
+  };
+  let M = null; // current model
+  const S = { pid: store.get("pid", null), ticks: new Set(), swap: {}, noSwap: new Set(), base: "usual", asked: new Set(), chat: [] };
+  function loadPersona(pid) {
+    const P = PERSONAS.find(p => p.id === pid) || PERSONAS[0];
+    S.pid = P.id; store.set("pid", P.id);
+    const saved = store.get("state-" + P.id, {});
+    S.ticks = new Set(saved.ticks || []); S.swap = saved.swap || {}; S.noSwap = new Set(saved.noSwap || []);
+    S.asked = new Set(); S.chat = [];
+    M = build(P);
+  }
+  const persist = () => store.set("state-" + S.pid, { ticks: [...S.ticks], swap: S.swap, noSwap: [...S.noSwap] });
+
+  /* ---------- The plan: what to buy at the next shop, and at what price ---------- */
+  function priceOf(n, b) { return n.special && n.special.b === b ? n.special.price : n.brands[b][1]; }
+  function planLine(n) {
+    const usualNow = priceOf(n, n.usualB);
+    let choice = n.usualB, swapOffer = null;
+    const swapsAllowed = n.flexible && !S.noSwap.has(n.i);
+    if (swapsAllowed) {
+      let best = n.usualB;
+      n.brands.forEach((_, b) => { if (priceOf(n, b) < priceOf(n, best)) best = b; });
+      if (best !== n.usualB && usualNow - priceOf(n, best) >= 30) {
+        swapOffer = { b: best, price: priceOf(n, best), save: usualNow - priceOf(n, best) };
+        if (S.swap[n.i] === "yes") choice = best;
+      }
+    }
+    const price = priceOf(n, choice);
+    return { n, choice, price, saving: Math.max(0, n.usual - price), onSpecial: !!(n.special && n.special.b === choice), swapOffer };
+  }
+  // The plan covers the week until the following shop (SHOP + 7): anything predicted to run out
+  // before then is bought now, in as many units as the rhythm says the week needs.
+  const NEXT_SHOP = SHOP + 7;
+  function plan() {
+    const due = [], soon = [], maybe = [];
+    const ago = d => d === 0 ? "today" : `${d} day${d === 1 ? "" : "s"} ago`;
+    M.needs.forEach(n => {
+      const L = planLine(n);
+      let qty = 0; for (let d = n.next; d < NEXT_SHOP; d += Math.max(1, n.med)) qty++;
+      const thisWeek = n.next < NEXT_SHOP, nextWeek = !thisWeek && n.next < NEXT_SHOP + 7;
+      L.qty = Math.max(1, qty);
+      if (n.tier[0] === "irr") { if (thisWeek) maybe.push(Object.assign(L, { qty: 1, why: "Irregular pattern · we ask, we don't assume" })); return; }
+      if (thisWeek) {
+        const why = `Every ~${n.med} days · last bought ${ago(-n.last)}${L.qty > 1 ? ` · ${L.qty} to last the week` : ""}`;
+        if (n.tier[0] === "steady") due.push(Object.assign(L, { why }));
+        else maybe.push(Object.assign(L, { qty: 1, why: `Every ~${n.med} days, but it varies · last bought ${ago(-n.last)}` }));
+      } else if (nextWeek) {
+        // Buy early when the usual product is on special now and the habit is steady.
+        if (n.tier[0] === "steady" && L.onSpecial && L.saving > 0) due.push(Object.assign(L, { qty: 1, early: true, why: `Due ${fmtShort(n.next)} · buy early while it's on special` }));
+        else soon.push(Object.assign(L, { qty: 1, why: `Likely due ${fmtShort(n.next)}` }));
+      }
+    });
+    [due, soon, maybe].forEach(g => g.forEach(l => { l.line = l.price * l.qty; l.lineSave = l.saving * l.qty; }));
+    const total = due.reduce((a, l) => a + l.line, 0), saving = due.reduce((a, l) => a + l.lineSave, 0);
+    return { due, soon, maybe, total, saving };
+  }
+
+  /* ---------- Icons ---------- */
+  const IC = {
+    plan: '<path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+    needs: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    savings: '<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>',
+    insights: '<path d="M3 9h18l-2 11H5L3 9zM8 9l4-6 4 6"/>',
+    ask: '<path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/>',
+    copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 00-1-1H5a1 1 0 00-1 1v10a1 1 0 001 1h3"/>'
+  };
+  const svg = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+  const ROUTES = [["plan", "Plan"], ["needs", "My needs"], ["savings", "Savings"], ["insights", "Insights"], ["ask", "Ask"]];
+  const checkBadge = '<span class="check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6.5l2.5 2.5L10 3"/></svg>Number-checked</span>';
+
+  /* ---------- Tooltip ---------- */
+  const tip = $("#tip");
+  function bindTips(root) {
+    $$("[data-tip]", root).forEach(el => {
+      const place = (x, y) => { tip.style.left = Math.max(8, Math.min(innerWidth - tip.offsetWidth - 8, x + 12)) + "px"; tip.style.top = Math.max(8, y - tip.offsetHeight - 12) + "px"; };
+      el.addEventListener("pointerenter", e => { tip.textContent = el.dataset.tip; tip.hidden = false; place(e.clientX, e.clientY); });
+      el.addEventListener("pointermove", e => place(e.clientX, e.clientY));
+      el.addEventListener("pointerleave", () => { tip.hidden = true; });
+    });
+  }
+  function toast(t) { const el = $("#toast"); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 2200); }
+
+  /* ---------- Charts (SVG, one axis, drawn to scale) ---------- */
+  function niceMax(v) { const p = Math.pow(10, Math.floor(Math.log10(v || 1))); return Math.ceil(v / p / 2) * 2 * p; }
+  function barChart({ data, value, label, tipText, alt, line, lineLabel, fmtY, W = 640, H = 230, max, over }) {
+    const L = 52, R = 12, T = 14, B = 30, iw = W - L - R, ih = H - T - B;
+    const vmax = max || niceMax(Math.max(...data.map(value), ...(line ? data.map(line) : [0])) * 1.1);
+    const y = v => T + ih - v / vmax * ih, bw = iw / data.length;
+    let g = [0, 0.5, 1].map(f => `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(vmax * f)}" y2="${y(vmax * f)}"></line><text x="${L - 8}" y="${y(vmax * f) + 4}" text-anchor="end">${fmtY(vmax * f)}</text>`).join("");
+    data.forEach((d, k) => {
+      const v = value(d), x = L + k * bw + bw * 0.18, w = bw * 0.64, h = Math.max(2, ih - (y(v) - T));
+      const cls = over && over(d) ? "bar over" : alt && alt(d) ? "bar alt" : "bar";
+      g += `<path class="${cls}" d="M${x},${T + ih} V${y(v) + 4} q0,-4 4,-4 h${w - 8} q4,0 4,4 V${T + ih} Z"></path>`;
+      g += `<rect class="hit" x="${L + k * bw}" y="${T}" width="${bw}" height="${ih}" data-tip="${esc(tipText(d))}"></rect>`;
+      if (k % Math.ceil(data.length / 6) === 0 || k === data.length - 1) g += `<text x="${x + w / 2}" y="${H - 10}" text-anchor="middle">${label(d)}</text>`;
+    });
+    if (line) g += `<path class="ln2" d="${data.map((d, k) => `${k ? "L" : "M"}${L + k * bw + bw / 2},${y(line(d))}`).join(" ")}"></path>`;
+    return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(lineLabel || "Bar chart")}">${g}</svg></div>`;
+  }
+  function lineChart({ data, value, label, tipText, fmtY, min = 0, max = 1, W = 640, H = 210 }) {
+    const L = 52, R = 14, T = 14, B = 30, iw = W - L - R, ih = H - T - B;
+    const x = k => L + (data.length === 1 ? iw / 2 : k / (data.length - 1) * iw), y = v => T + ih - (v - min) / (max - min) * ih;
+    let g = [0, 0.5, 1].map(f => { const v = min + (max - min) * f; return `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"></line><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${fmtY(v)}</text>`; }).join("");
+    g += `<path class="ln" d="${data.map((d, k) => `${k ? "L" : "M"}${x(k)},${y(value(d))}`).join(" ")}"></path>`;
+    data.forEach((d, k) => {
+      g += `<circle class="dot" cx="${x(k)}" cy="${y(value(d))}" r="${k === data.length - 1 ? 5.5 : 3.5}"></circle>`;
+      g += `<rect class="hit" x="${x(k) - iw / data.length / 2}" y="${T}" width="${iw / data.length}" height="${ih}" data-tip="${esc(tipText(d))}"></rect>`;
+      if (k % 2 === 1 || k === data.length - 1) g += `<text x="${x(k)}" y="${H - 10}" text-anchor="middle">${label(d)}</text>`;
+    });
+    return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Line chart">${g}</svg></div>`;
+  }
+  // Purchase dots for one need: last 26 weeks plus the predicted next buy.
+  function rhythmStrip(n) {
+    const W = 440, H = 64, L = 6, R = 10, x = d => L + (d + 182) / 196 * (W - L - R);
+    let g = `<line class="gl" x1="${L}" x2="${W - R}" y1="30" y2="30"></line><line x1="${x(0)}" x2="${x(0)}" y1="12" y2="48" stroke="var(--fg)" stroke-width="1.5"></line><text x="${x(0)}" y="60" text-anchor="middle">today</text><text x="${L}" y="60">${fmtDM(-182)}</text>`;
+    n.hist.forEach(h => { g += `<circle cx="${x(h.day).toFixed(1)}" cy="30" r="5.5" fill="${h.b === n.usualB ? "var(--accent)" : "var(--info)"}" stroke="var(--surface)" stroke-width="2" data-tip="${esc(`${fmtShort(h.day)} · ${n.brands[h.b][0]} · ${money(h.price)}${h.special ? " · on special" : ""}`)}"></circle>`; });
+    if (n.next <= 14) g += `<circle cx="${x(Math.max(n.next, -2)).toFixed(1)}" cy="30" r="6" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 2" data-tip="Predicted next buy: ${esc(fmtShort(n.next))}"></circle>`;
+    return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Purchase timeline for ${esc(n.n)}">${g}</svg></div>`;
+  }
+
+  /* ---------- Shell ---------- */
+  function renderShell() {
+    const P = M.P;
+    $("#hh-side").innerHTML = `<b>${esc(P.name)}</b><span>${esc(P.who)} · ${P.size} ${P.size === 1 ? "person" : "people"}</span><button type="button" data-switch>Switch household</button>`;
+    $("#hh-top").textContent = P.name + " ▾";
+    const links = ROUTES.map(([id, t]) => `<a href="#${id}" data-r="${id}">${svg(IC[id])}<span>${t}</span></a>`).join("");
+    $("#nav-side").innerHTML = links; $("#nav-tabs").innerHTML = links.replace(/My needs/, "Needs");
+    $$("[data-switch]").forEach(b => b.addEventListener("click", showWelcome));
+  }
+  $("#hh-top").addEventListener("click", showWelcome);
+  function route() {
+    const r = (location.hash || "#plan").slice(1);
+    const id = ROUTES.some(x => x[0] === r) ? r : "plan";
+    $$("[data-r]").forEach(a => a.classList.toggle("on", a.dataset.r === id));
+    ({ plan: renderPlan, needs: renderNeeds, savings: renderSavings, insights: renderInsights, ask: renderAsk })[id]();
+    bindTips($("#main"));
+  }
+  addEventListener("hashchange", () => { route(); scrollTo(0, 0); });
+
+  /* ---------- Plan screen ---------- */
+  function itemHTML(L, opts = {}) {
+    const n = L.n, swapped = L.choice !== n.usualB, prod = `${L.qty > 1 ? L.qty + " × " : ""}${n.brands[L.choice][0]} ${n.pack}`;
+    const tags = [];
+    if (L.onSpecial) tags.push('<span class="pill irr">On special</span>');
+    if (L.early) tags.push('<span class="pill some">Buy early</span>');
+    if (swapped) tags.push('<span class="pill steady">Swapped</span>');
+    if (n.must) tags.push(`<span class="pill neutral">Must be ${esc(n.must.toLowerCase())}</span>`);
+    let html = `<div class="item${S.ticks.has(n.i) ? " done" : ""}">
+      ${opts.tick === false ? "<span></span>" : `<input type="checkbox" data-tick="${n.i}" aria-label="Got ${esc(n.n)}" ${S.ticks.has(n.i) ? "checked" : ""}>`}
+      <div class="body"><button type="button" class="nm" data-need="${n.i}">${esc(n.n)}</button><span class="prod">${esc(prod)}</span><span class="why">${esc(L.why)}</span>${tags.length ? `<span class="tags">${tags.join("")}</span>` : ""}</div>
+      <div class="right"><span class="px">${opts.noPrice ? "" : money(L.line)}</span>${L.qty > 1 && !opts.noPrice ? `<span class="unit">${L.qty} × ${money(L.price)}</span>` : ""}${L.lineSave > 0 && !opts.noPrice ? `<span class="save">−${money(L.lineSave).slice(1)} vs usual</span>` : ""}</div>`;
+    if (L.swapOffer && S.swap[n.i] === undefined && opts.swap !== false) {
+      html += `<div class="swap"><span class="t">Smart swap</span><p><b>${esc(n.brands[L.swapOffer.b][0])} ${esc(n.pack)}</b> is ${money(L.swapOffer.price)}, ${money(L.swapOffer.save)} less than your usual. You've switched brands for ${esc(n.n.toLowerCase())} before.</p>
+        <div class="b"><button type="button" class="primary" data-swap="${n.i}" data-v="yes">Swap and save ${money(L.swapOffer.save)}</button><button type="button" data-swap="${n.i}" data-v="no">Keep my brand</button></div></div>`;
+    }
+    return html + "</div>";
+  }
+  function renderPlan() {
+    const p = plan(), P = M.P, ticked = p.due.filter(l => S.ticks.has(l.n.i)).length;
+    const left = P.budget - p.total, swapsWaiting = p.due.filter(l => l.swapOffer && S.swap[l.n.i] === undefined).length;
+    // Next 14 days: each steady or somewhat-regular need placed on its predicted days.
+    const cal = Array.from({ length: 14 }, (_, k) => ({ d: k, items: [] }));
+    M.needs.filter(n => n.tier[0] !== "irr").forEach(n => { for (let d = Math.max(n.next, 0); d < 14; d += Math.max(1, n.med)) cal[d].items.push(n.n); });
+    $("#main").innerHTML = `<div class="page">
+      <div class="ph"><div><h1>Your plan for ${fmt(SHOP, { weekday: "long", day: "numeric", month: "long" })}</h1><p>Covers you until ${fmtShort(NEXT_SHOP)} · built from ${M.receipts} receipts · updated today 7:02am</p></div>
+        <button type="button" class="btn" id="copy">${svg(IC.copy)}Copy list</button></div>
+      <div class="kpis">
+        <div class="kpi hero"><span class="k">Plan total</span><span class="v">${money(p.total)}</span><span class="s">${p.due.length} items · ${ticked} in trolley</span></div>
+        <div class="kpi"><span class="k">Saving vs your usual</span><span class="v" style="color:var(--accent)">${money(p.saving)}</span><span class="s">${swapsWaiting ? `${swapsWaiting} swap${swapsWaiting > 1 ? "s" : ""} could add more` : "All swaps decided"}</span></div>
+        <div class="kpi"><span class="k">Weekly budget left</span><span class="v">${money(left)}</span><span class="s">of ${money0(P.budget)} for the week</span></div>
+        <div class="kpi"><span class="k">Coming up next week</span><span class="v">${p.soon.length}</span><span class="s">items, not in this total</span></div>
+      </div>
+      <div class="cols">
+        <div class="card">
+          <div class="grp"><span>Due this shop</span><span>${ticked} of ${p.due.length} ticked</span></div>
+          ${p.due.length ? p.due.map(l => itemHTML(l)).join("") : '<p class="empty">Nothing due. Enjoy the week off.</p>'}
+          <div class="grp"><span>Maybe · lower confidence</span><span>not in total</span></div>
+          ${p.maybe.length ? p.maybe.map(l => itemHTML(l, { swap: false, noPrice: true })).join("") : '<p class="empty">No uncertain items this week.</p>'}
+          <div class="grp"><span>Coming up next week</span><span>not in total</span></div>
+          ${p.soon.length ? p.soon.map(l => itemHTML(l, { tick: false, swap: false })).join("") : '<p class="empty">Nothing else predicted for next week.</p>'}
+          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:12px;flex-wrap:wrap;gap:8px">${checkBadge}<span class="note">Saving measured against what you usually pay</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+          <div class="card"><h3>Budget for this week</h3>
+            <div class="budget"><div class="btrack"><i class="${left < 0 ? "over" : ""}" style="width:${Math.min(100, p.total / P.budget * 100)}%"></i></div>
+            <div class="brow"><span>This plan</span><b>${money(p.total)}</b></div><div class="brow"><span>Left for top-ups and treats</span><b>${money(left)}</b></div></div></div>
+          <div class="card"><h3>Next 14 days</h3><p class="cap">When each regular need is likely to run out.</p>
+            <div class="agenda">${cal.filter(c => c.items.length || c.d === SHOP).map(c => dayHTML(c)).join("")}</div></div>
+          <div class="card"><h3>How this plan was made</h3>
+            <p class="note">Predicted from your own buying rhythm, matched to this week's specials, and checked line by line. Low-confidence items stay out of the total. Worked out on this device.</p></div>
+        </div>
+      </div></div>`;
+    $$("[data-tick]").forEach(c => c.addEventListener("change", () => { const i = +c.dataset.tick; c.checked ? S.ticks.add(i) : S.ticks.delete(i); persist(); renderPlan(); bindTips($("#main")); }));
+    $$("[data-swap]").forEach(b => b.addEventListener("click", () => { S.swap[+b.dataset.swap] = b.dataset.v; persist(); toast(b.dataset.v === "yes" ? "Swapped. We'll check it sticks." : "Kept your brand. Noted."); renderPlan(); }));
+    $$("[data-need]").forEach(b => b.addEventListener("click", () => openNeed(+b.dataset.need)));
+    $("#copy").addEventListener("click", () => {
+      const text = `NeedSmart plan · ${fmtShort(SHOP)}\n` + p.due.map(l => `[ ] ${l.qty > 1 ? l.qty + " × " : ""}${l.n.n}: ${l.n.brands[l.choice][0]} ${l.n.pack} · ${money(l.line)}`).join("\n") + `\nTotal ${money(p.total)} · saving ${money(p.saving)}`;
+      (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject()).then(() => toast("List copied"), () => toast("Copy isn't available here"));
+    });
+  }
+  function dayHTML(c) {
+    const shop = c.d === SHOP;
+    return `<div class="ag${shop ? " shop" : ""}"><span class="dl">${c.d === 0 ? "Today" : fmt(c.d, { weekday: "short", day: "numeric" })}${shop ? "<b>Shop day</b>" : ""}</span><span>${c.items.length ? esc(c.items.join(", ")) : '<span class="note">Nothing runs out</span>'}</span></div>`;
+  }
+
+  /* ---------- Needs screen ---------- */
+  let needFilter = "all";
+  function renderNeeds() {
+    const list = M.needs.filter(n => needFilter === "all" || n.tier[0] === needFilter || (needFilter === "flex" && n.flexible) || (needFilter === "loyal" && !n.flexible && n.brands.length > 1));
+    const habit = n => n.brands.length < 2 ? "One product" : n.flexible ? `Flexible · ${n.brands.length} brands` : `Loyal · ${n.brands[n.usualB][0]}`;
+    const nextTxt = n => n.next <= 0 ? "Now" : fmtShort(n.next);
+    $("#main").innerHTML = `<div class="page">
+      <div class="ph"><div><h1>My needs</h1><p>${M.needs.length} needs learned from ${M.receipts} receipts. Tap one to see its rhythm and brand history.</p></div></div>
+      <div class="filters"><div class="seg" role="group" aria-label="Filter needs">
+        ${[["all", "All"], ["steady", "Steady"], ["some", "Somewhat"], ["irr", "Irregular"], ["flex", "Brand-flexible"], ["loyal", "Brand-loyal"]].map(([k, t]) => `<button type="button" data-f="${k}" aria-pressed="${needFilter === k}">${t}</button>`).join("")}
+      </div></div>
+      <div class="ntable"><table><thead><tr><th>Need</th><th>Rhythm</th><th>Pattern</th><th>Brand habit</th><th>Next due</th><th>Usual price</th><th>Swaps</th></tr></thead><tbody>
+        ${list.map(n => `<tr class="row" data-need="${n.i}" tabindex="0"><td><b>${esc(n.n)}</b><br><span class="note">${esc(n.pack)}</span></td><td class="num">every ~${n.med}d</td><td><span class="pill ${n.tier[0]}">${n.tier[1]}</span></td><td>${esc(habit(n))}</td><td class="num">${nextTxt(n)}</td><td class="num">${money(n.usual)}</td><td>${n.flexible ? (S.noSwap.has(n.i) ? "Off" : "On") : "Never"}</td></tr>`).join("")}
+      </tbody></table></div>
+      <div class="ncards">${list.map(n => `<button type="button" class="ncard" data-need="${n.i}"><b>${esc(n.n)}</b><span class="pill ${n.tier[0]}">${n.tier[1]}</span><span class="sub">Every ~${n.med} days · next ${nextTxt(n)} · ${esc(habit(n))}</span></button>`).join("")}</div>
+    </div>`;
+    $$("[data-f]").forEach(b => b.addEventListener("click", () => { needFilter = b.dataset.f; renderNeeds(); }));
+    $$("[data-need]").forEach(el => { el.addEventListener("click", () => openNeed(+el.dataset.need)); el.addEventListener("keydown", e => { if (e.key === "Enter") openNeed(+el.dataset.need); }); });
+  }
+
+  /* ---------- Need detail drawer ---------- */
+  let lastFocus = null;
+  function openNeed(i) {
+    const n = M.needs[i], L = planLine(n);
+    lastFocus = document.activeElement;
+    const indTxt = n.indiff === null ? "—" : n.indiff.toFixed(2);
+    const band = n.indiff === null ? "Only one product, so there's nothing to swap." : n.loyal ? `You stick with ${n.brands[n.usualB][0]}. NeedSmart never swaps it, and flags its specials instead.` : n.indiff >= 0.6 ? "You switch brands freely here, so NeedSmart offers the cheapest acceptable option." : n.indiff >= 0.3 ? "You sometimes switch. NeedSmart tests one swap at a time and watches what you do next." : "You mostly stick to one brand here. NeedSmart will only suggest a swap when the saving is large.";
+    const status = n.tier[0] === "irr" ? "Your buying here is irregular, so it never appears as \"due\". It shows under \"Maybe\" when it might be close." : n.next < NEXT_SHOP ? `It runs out before ${fmtShort(NEXT_SHOP)}, so it's on this week's plan.` : `It's not due until about ${fmtShort(n.next)}.`;
+    $("#drawer").innerHTML = `
+      <div class="dh"><div><h2 id="d-title">${esc(n.n)}</h2><p class="note">${esc(n.brands[n.usualB][0])} ${esc(n.pack)} · ${esc(n.cat)}</p></div><button type="button" class="x" id="d-close" aria-label="Close">×</button></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${n.tier[0]}">${n.tier[1]} · ${n.score.toFixed(2)}</span><span class="pill neutral">${n.brands.length < 2 ? "One product" : n.flexible ? "Brand-flexible" : "Brand-loyal"}</span>${n.must ? `<span class="pill neutral">Must be ${esc(n.must.toLowerCase())}</span>` : ""}</div>
+      ${rhythmStrip(n)}
+      <div class="legend2"><span style="--c:var(--accent)">${esc(n.brands[n.usualB][0])}</span>${n.brands.length > 1 ? '<span style="--c:var(--info)">Other brands</span>' : ""}<span style="--c:transparent;outline:1.5px dashed var(--accent)">Predicted next</span></div>
+      <div class="stats">
+        <div><span>Buys every</span><b>~${n.med} days</b></div><div><span>Last bought</span><b>${fmtDM(n.last)}</b></div><div><span>Next due</span><b>${n.next <= 0 ? "Now" : fmtDM(n.next)}</b></div>
+        <div><span>Regularity</span><b>${n.score.toFixed(2)}</b></div><div><span>Brand indifference</span><b>${indTxt}</b></div><div><span>Usual price</span><b>${money(n.usual)}</b></div>
+      </div>
+      <p class="explain">${esc(status)} ${esc(band)}</p>
+      <div class="toggle"><label for="d-swap">Offer cheaper swaps for this need</label><input type="checkbox" class="sw" id="d-swap" ${n.flexible && !S.noSwap.has(i) ? "checked" : ""} ${n.flexible ? "" : "disabled"}></div>
+      <div><h3 style="font-size:15px;margin-bottom:4px">Recent buys</h3><div class="hist">${n.hist.slice(-6).reverse().map(h => `<div><span class="d">${fmtShort(h.day)}</span><span>${esc(n.brands[h.b][0])}${h.special ? ' <span class="pill irr">special</span>' : ""}</span><b class="mono">${money(h.price)}</b></div>`).join("")}</div></div>
+      ${L.onSpecial ? `<p class="explain" style="background:var(--accent-soft)">This week: ${esc(n.brands[L.choice][0])} is on special at ${money(L.price)}, ${money(Math.max(0, n.usual - L.price))} below what you usually pay.</p>` : ""}`;
+    $("#drawer").hidden = false; $("#scrim").hidden = false;
+    bindTips($("#drawer"));
+    $("#d-close").focus();
+    $("#d-close").addEventListener("click", closeNeed);
+    const sw = $("#d-swap");
+    if (n.flexible) sw.addEventListener("change", () => { sw.checked ? S.noSwap.delete(i) : (S.noSwap.add(i), delete S.swap[i]); persist(); toast(sw.checked ? "Swaps on for " + n.n : "No more swaps for " + n.n); route(); });
+  }
+  function closeNeed() { $("#drawer").hidden = true; $("#scrim").hidden = true; tip.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  $("#scrim").addEventListener("click", closeNeed);
+  addEventListener("keydown", e => { if (e.key === "Escape" && !$("#drawer").hidden) closeNeed(); });
+
+  /* ---------- Savings & performance ---------- */
+  function renderSavings() {
+    const pf = M.perf, P = M.P, base = S.base;
+    const val = w => base === "usual" ? w.saved : w.typical;
+    const tot = pf.reduce((a, w) => a + val(w), 0), last4 = pf.slice(-4).reduce((a, w) => a + val(w), 0);
+    const acc = pf.slice(-4).reduce((a, w) => a + w.bought, 0) / pf.slice(-4).reduce((a, w) => a + w.reminded, 0);
+    const accFirst = pf.slice(0, 4).reduce((a, w) => a + w.bought, 0) / pf.slice(0, 4).reduce((a, w) => a + w.reminded, 0);
+    const swO = pf.reduce((a, w) => a + w.swapsOffered, 0), swK = pf.reduce((a, w) => a + w.swapsKept, 0);
+    const wk = w => fmtDM(w.day);
+    $("#main").innerHTML = `<div class="page">
+      <div class="ph"><div><h1>Savings and performance</h1><p>Your last 12 weeks with NeedSmart. Every figure is confirmed from the receipt after each shop.</p></div>
+        <div class="seg" role="group" aria-label="Compare against"><button type="button" data-b="usual" aria-pressed="${base === "usual"}">vs your usual</button><button type="button" data-b="typical" aria-pressed="${base === "typical"}">vs a typical shopper</button></div></div>
+      <div class="kpis">
+        <div class="kpi hero"><span class="k">Saved in 12 weeks</span><span class="v">${money0(tot)}</span><span class="s">${base === "usual" ? "vs what you usually pay" : "vs best-sellers at shelf price"}</span></div>
+        <div class="kpi"><span class="k">Last 4 weeks</span><span class="v">${money(last4)}</span><span class="s">${money(Math.round(last4 / 4))} a week on average</span></div>
+        <div class="kpi"><span class="k">Reminder accuracy</span><span class="v">${Math.round(acc * 100)}%</span><span class="s">up from ${Math.round(accFirst * 100)}% in your first month</span></div>
+        <div class="kpi"><span class="k">Swaps you kept</span><span class="v">${swK} of ${swO}</span><span class="s">NeedSmart stops where you don't</span></div>
+      </div>
+      ${base === "typical" ? '<p class="note" style="margin-top:-8px">The typical-shopper figure is higher because you already buy cheaper than average. Your real NeedSmart saving is the "vs your usual" view.</p>' : ""}
+      <div class="cols2">
+        <div class="card"><h3>Saved each week</h3><p class="cap">Confirmed from your receipts after each shop</p>
+          ${barChart({ data: pf, value: val, label: wk, fmtY: v => "$" + Math.round(v / 100), tipText: w => `Week of ${wk(w)}: saved ${money(val(w))}`, lineLabel: "Weekly savings" })}</div>
+        <div class="card"><h3>Reminder accuracy</h3><p class="cap">Share of "due" reminders you actually bought. It improves as NeedSmart learns.</p>
+          ${lineChart({ data: pf, value: w => w.bought / w.reminded, label: wk, fmtY: v => Math.round(v * 100) + "%", min: 0.5, max: 1, tipText: w => `Week of ${wk(w)}: ${w.bought} of ${w.reminded} reminders bought (${Math.round(w.bought / w.reminded * 100)}%)` })}</div>
+        <div class="card"><h3>Spend against budget</h3><p class="cap">Weekly spend, with your ${money0(P.budget)} budget dashed. Orange weeks went over.</p>
+          ${barChart({ data: pf, value: w => w.spend, label: wk, line: () => P.budget, over: w => w.spend > P.budget, fmtY: v => "$" + Math.round(v / 100), tipText: w => `Week of ${wk(w)}: spent ${money(w.spend)} of ${money(P.budget)}`, lineLabel: "Spend against budget" })}
+          <div class="legend"><span style="--c:var(--accent)">Within budget</span><span style="--c:var(--warn)">Over budget</span><span style="--c:var(--info)">Budget</span></div></div>
+        <div class="card"><h3>Last four shops</h3>
+          <div style="overflow-x:auto"><table style="min-width:380px"><thead><tr><th>Shop</th><th>From plan</th><th>Saved</th><th></th></tr></thead><tbody>
+          ${pf.slice(-4).reverse().map(w => `<tr><td class="num">${fmtShort(w.day)}</td><td class="num">${w.bought} of ${w.reminded}</td><td class="num" style="color:var(--accent)">${money(val(w))}</td><td>${checkBadge}</td></tr>`).join("")}
+          </tbody></table></div><p class="note">All figures are a demo. In the product they come from matching each plan to the next receipt.</p></div>
+      </div></div>`;
+    $$("[data-b]").forEach(b => b.addEventListener("click", () => { S.base = b.dataset.b; renderSavings(); bindTips($("#main")); }));
+  }
+
+  /* ---------- Insights ---------- */
+  function renderInsights() {
+    const P = M.P, from = -91;
+    const spendBy = {}, hsr = { hi: 0, mid: 0, lo: 0 };
+    let total = 0, rated = 0, promo = 0, buys = 0;
+    M.needs.forEach(n => n.hist.forEach(h => {
+      buys++; if (h.special) promo++;
+      if (h.day < from) return;
+      spendBy[n.cat] = (spendBy[n.cat] || 0) + h.price; total += h.price;
+      if (n.hsr != null) { rated += h.price; hsr[n.hsr >= 4 ? "hi" : n.hsr >= 2.5 ? "mid" : "lo"] += h.price; }
+    }));
+    const cats = Object.entries(spendBy).sort((a, b) => b[1] - a[1]);
+    const maxC = cats[0][1];
+    const steady = M.needs.filter(n => n.tier[0] === "steady").length;
+    const loyal = M.needs.filter(n => n.loyal && n.brands.length > 1).length, flex = M.needs.filter(n => n.flexible).length;
+    const pct = v => Math.round(v / rated * 100);
+    const style = steady / M.needs.length > 0.6 ? (flex > loyal ? "Planner who shops for value" : "Planner who stocks up") : "Top-up shopper";
+    $("#main").innerHTML = `<div class="page">
+      <div class="ph"><div><h1>Insights</h1><p>What your receipts say about your basket and your shopping style. It describes the basket, never the person.</p></div></div>
+      <div class="cols2">
+        <div class="card"><h3>Where the money goes</h3><p class="cap">Last 13 weeks, by category</p>
+          <div class="hbars">${cats.map(([c, v]) => `<div class="hbar" data-tip="${esc(c)}: ${money(v)} (${Math.round(v / total * 100)}%)"><span>${esc(c)}</span><span class="tr"><i style="width:${v / maxC * 100}%;${c === "Snacks" ? "background:var(--warn)" : ""}"></i></span><span class="v">${Math.round(v / total * 100)}%</span></div>`).join("")}</div></div>
+        <div class="card"><h3>Health Star Rating mix</h3><p class="cap">Rated products only, by spend. From product data, not guessed.</p>
+          <div class="stack"><i style="width:${pct(hsr.hi)}%;background:var(--accent)"></i><i style="width:${pct(hsr.mid)}%;background:var(--info)"></i><i style="width:${pct(hsr.lo)}%;background:var(--warn)"></i></div>
+          <div class="legend2"><span style="--c:var(--accent)">4 to 5 stars · ${pct(hsr.hi)}%</span><span style="--c:var(--info)">2.5 to 3.5 · ${pct(hsr.mid)}%</span><span style="--c:var(--warn)">below 2.5 · ${pct(hsr.lo)}%</span></div>
+          <p class="note">Covers ${Math.round(rated / total * 100)}% of your spend. Household items aren't rated.</p></div>
+        <div class="card"><div class="persona"><span class="k">You shop like a</span><span class="v">${style}</span></div>
+          <div class="trait"><b>Steady needs</b><span class="n">${steady} of ${M.needs.length}</span><span class="d">bought on a regular rhythm, so reminders can be confident</span></div>
+          <div class="trait"><b>Brand-flexible</b><span class="n">${flex} needs</span><span class="d">where you switch freely, so swaps are offered</span></div>
+          <div class="trait"><b>Brand-loyal</b><span class="n">${loyal} needs</span><span class="d">where you stick with one brand, so swaps are never offered</span></div>
+          <div class="trait"><b>Bought on special</b><span class="n">${Math.round(promo / buys * 100)}%</span><span class="d">of ${buys} items across 26 weeks</span></div></div>
+        <div class="card"><h3>Households like yours</h3><p class="cap">${P.size}-person households, from anonymised aggregate tables</p>
+          <p style="font-size:15px">You save more than <b>${P.pct}%</b> of similar households.</p>
+          <div class="meter"><i style="width:${P.pct}%"></i><b style="left:50%"></b></div><p class="note">The line marks the median household.</p></div>
+      </div></div>`;
+  }
+
+  /* ---------- Ask ---------- */
+  function questions() {
+    const p = plan(), first = p.due[0], flexNeed = M.needs.find(n => n.flexible && n.brands.some((b, k) => k !== n.usualB && b[1] < n.usual));
+    const pf = M.perf, last4 = pf.slice(-4).reduce((a, w) => a + w.saved, 0), last4t = pf.slice(-4).reduce((a, w) => a + w.typical, 0);
+    const top = [...M.needs].sort((a, b) => a.score - b.score).slice(0, 3);
+    const qs = [];
+    if (first) qs.push({ q: `Why is ${first.n.n.toLowerCase()} on my list?`, a: `You buy ${first.n.n.toLowerCase()} about every ${first.n.med} days and last bought it on ${fmtShort(first.n.last)}, so it'll run out before your ${fmtShort(NEXT_SHOP)} shop and goes on this week's list. ${first.onSpecial ? `It's on special at ${money(first.price)}, ${money(first.saving)} below what you usually pay.` : `It's ${money(first.price)} this week, your usual price.`}`, tools: [`needs.explain("${first.n.n}")`, `pricing.this_week("${first.n.n}")`, "checker ✓ figures verified"] });
+    qs.push({ q: "How much did I save in the last 4 weeks?", a: `${money(last4)} across 4 shops, against what you usually pay for the same items. Compared with a typical shopper buying best-sellers at shelf price it would be ${money(last4t)}, but that flatters, so I keep it separate.`, tools: ["outcomes.realised(weeks=4)", "benchmark.typical(weeks=4)", "checker ✓ figures verified"] });
+    if (flexNeed) { const alt = flexNeed.brands.map((b, k) => [k, b[1]]).filter(x => x[0] !== flexNeed.usualB).sort((a, b) => a[1] - b[1])[0]; qs.push({ q: `Is there a cheaper way to buy ${flexNeed.n.toLowerCase()}?`, a: `${flexNeed.brands[alt[0]][0]} ${flexNeed.pack} is ${money(alt[1])} at regular price, against the ${money(flexNeed.usual)} you usually pay. You've switched brands for ${flexNeed.n.toLowerCase()} before, so I can suggest it. You can turn swaps off for this need any time.`, tools: [`matching.alternatives("${flexNeed.n}")`, `profile.brand_habit("${flexNeed.n}")`, "checker ✓ figures verified"] }); }
+    qs.push({ q: "Which needs am I most regular with?", a: `${top.map(n => `${n.n} (every ~${n.med} days)`).join(", ")}. These are the ones I remind you about with the most confidence.`, tools: ["needs.rank(by=\"regularity\")"] });
+    qs.push({ q: "Should I go on a diet?", a: "I can describe what's in your basket, but I don't give diet, health or medical advice. A GP or dietitian is the right person for that.", tools: ["policy: personal health advice declined"], refuse: true });
+    return qs;
+  }
+  let busy = false;
+  function renderAsk() {
+    const qs = questions();
+    $("#main").innerHTML = `<div class="page" style="max-width:820px">
+      <div class="ph"><div><h1>Ask NeedSmart</h1><p>Answers come from your own receipts. The maths is done by tools and checked before you see it.</p></div></div>
+      <div class="chat" id="chat" aria-live="polite"><div class="msg bot">Hi ${esc(M.P.who.split(/[ ,]/)[0])}. Ask me about your plan, your savings or your basket. I'll show which tools I used.</div>
+        ${S.chat.map(m => m.me ? `<div class="msg me">${esc(m.t)}</div>` : `<div class="msg bot${m.refuse ? " refuse" : ""}"><span>${esc(m.t)}</span><span class="tools">${m.tools.map(t => `<span>${esc(t)}</span>`).join("")}</span></div>`).join("")}</div>
+      <div class="qchips">${qs.map((x, k) => `<button type="button" class="qchip" data-q="${k}" ${S.asked.has(x.q) ? "disabled" : ""}>${esc(x.q)}</button>`).join("")}</div>
+      <p class="note">In the product, members can type any question. This demo offers suggested questions.</p></div>`;
+    $$("[data-q]").forEach(b => b.addEventListener("click", () => {
+      const x = qs[+b.dataset.q];
+      if (busy || S.asked.has(x.q)) return;
+      busy = true; S.asked.add(x.q); S.chat.push({ me: true, t: x.q });
+      renderAsk();
+      const chat = $("#chat"), t = document.createElement("div");
+      t.className = "msg bot"; t.innerHTML = '<span class="typing" aria-label="Thinking"><i></i><i></i><i></i></span>'; chat.appendChild(t);
+      t.scrollIntoView({ block: "nearest" });
+      setTimeout(() => { S.chat.push({ t: x.a, tools: x.tools, refuse: x.refuse }); busy = false; renderAsk(); $("#chat").lastElementChild.scrollIntoView({ block: "nearest" }); }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 900);
+    }));
+  }
+
+  /* ---------- Welcome: pick a household, then a short "analysing" sequence ---------- */
+  function showWelcome() {
+    const w = $("#welcome");
+    w.innerHTML = `<div class="wwrap">
+      <span class="pill steady" style="align-self:flex-start">Try me · demo with made-up data</span>
+      <h1>See your week, <em>planned for you.</em></h1>
+      <p class="lede">Pick a demo household. NeedSmart reads its 26 weeks of receipts, learns its rhythm and builds this week's grocery plan, with savings, insights and an assistant to ask.</p>
+      <div class="personas">${PERSONAS.map(p => `<button type="button" class="pcard" data-p="${p.id}"><span class="av">${p.short}</span><h3>${esc(p.name)}</h3><p>${esc(p.who)} · ${p.size} ${p.size === 1 ? "person" : "people"}</p><p>${esc(p.blurb)}</p><span class="tagrow">${p.tags.map(t => `<span class="pill neutral">${esc(t)}</span>`).join("")}<span class="pill neutral">${money0(p.budget)}/week</span></span><span class="go">Try as ${esc(p.name.split(" ")[0])} →</span></button>`).join("")}</div>
+      <p class="wfoot">Everything you'll see is generated for the demo. No real receipts, prices or members are used.</p></div>`;
+    w.hidden = false;
+    $$("[data-p]", w).forEach(b => b.addEventListener("click", () => analyse(b.dataset.p)));
+    const f = $("[data-p]", w); if (f) f.focus();
+  }
+  function analyse(pid) {
+    loadPersona(pid);
+    const p = plan(), w = $("#welcome");
+    const steps = [["Reading receipts", `${M.receipts} shops`], ["Grouping products into needs", `${M.needs.length} needs`], ["Measuring each rhythm", `${M.needs.filter(n => n.tier[0] === "steady").length} steady`], ["Matching this week's specials", `${M.needs.filter(n => n.special).length} found`], ["Checking every price", "all verified"], ["Building your plan", `${p.due.length} items`]];
+    w.innerHTML = `<div class="analyse"><span class="pill steady" style="align-self:flex-start">${esc(M.P.name)}</span><h2>Building your plan</h2><div class="prog"><i id="prog"></i></div>
+      <div class="steps">${steps.map(s => `<div class="stepx"><span class="ic"></span><span>${s[0]}</span><b>${s[1]}</b></div>`).join("")}</div>
+      <p class="note">This happens on the phone. Nothing leaves the device.</p></div>`;
+    const els = $$(".stepx", w), fast = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let k = 0;
+    const tick = () => {
+      if (k < els.length) { els[k].classList.add("on"); k++; $("#prog").style.width = (k / els.length * 100) + "%"; setTimeout(tick, fast ? 0 : 320); }
+      else setTimeout(() => { w.hidden = true; renderShell(); if (location.hash !== "#plan") location.hash = "#plan"; else route(); scrollTo(0, 0); }, fast ? 0 : 350);
+    };
+    tick();
+  }
+
+  /* ---------- Boot ---------- */
+  if (S.pid && PERSONAS.some(p => p.id === S.pid)) { loadPersona(S.pid); renderShell(); route(); }
+  else { loadPersona("rivera"); renderShell(); route(); showWelcome(); }
+})();
+</script>
+</body>
+</html>
