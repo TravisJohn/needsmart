@@ -285,10 +285,62 @@ tbody tr.row:hover td { background: var(--surface-2); }
 .prog i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .35s; }
 .toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 9px 16px; border-radius: 999px; font-size: 13.5px; z-index: 70; }
 @media (min-width: 901px) { .toast { bottom: 28px; } }
+/* ---------- Preview switch: desktop, phone, or both (desktop wide screens only) ---------- */
+.viewseg { display: inline-flex; gap: 2px; padding: 2px; border-radius: 999px; background: color-mix(in srgb, var(--bg) 18%, transparent); }
+.viewseg button { border: 0; background: transparent; color: var(--bg); opacity: .8; font-size: 12px; font-weight: 700; padding: 3px 11px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+.viewseg button svg { width: 13px; height: 13px; }
+.viewseg button[aria-pressed="true"] { background: var(--bg); color: var(--fg); opacity: 1; }
+.demo-bar .right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.stage { position: fixed; top: 32px; right: 0; bottom: 0; z-index: 15; background: var(--surface-2); display: flex; align-items: center; justify-content: center; gap: 48px; padding: 20px; }
+.stage .pitch { max-width: 340px; display: flex; flex-direction: column; gap: 12px; }
+.stage .pitch h2 { font-size: 32px; font-weight: 800; }
+.stage .pitch p { color: var(--muted); font-size: 15px; }
+.stage .pitch .url { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); word-break: break-all; }
+.stage .cap { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-align: center; }
+.stage .col { display: flex; flex-direction: column; gap: 10px; align-items: center; min-height: 0; max-height: 100%; }
+.pframe { width: 410px; height: min(864px, calc(100vh - 32px - 70px)); border-radius: 46px; background: #0b0f12; padding: 10px; box-shadow: 0 30px 60px -28px var(--shadow), 0 0 0 1px var(--line); position: relative; flex-shrink: 0; }
+.pframe::before { content: ""; position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 92px; height: 24px; border-radius: 999px; background: #0b0f12; z-index: 2; }
+.pframe iframe { width: 390px; height: 100%; border: 0; border-radius: 36px; background: var(--bg); display: block; }
+html[data-view="phone"] .shell { display: none; }
+html[data-view="phone"] .stage { left: 0; }
+html[data-view="both"] .stage { left: auto; width: 470px; border-left: 1px solid var(--line); }
+html[data-view="both"] .stage .pitch { display: none; }
+html[data-view="both"] .shell { margin-right: 470px; }
+html[data-view="both"] .drawer { right: 470px; }
+html[data-view="both"] .toast { left: calc((100% - 470px) / 2); }
+@media (max-width: 1100px) {
+  .viewseg { display: none; }
+  .stage { display: none !important; }
+  html[data-view] .shell { display: grid; margin-right: 0; }
+  html[data-view] .drawer { right: 0; }
+}
+@media (max-width: 1240px) { html[data-view="phone"] .stage .pitch { display: none; } }
+/* Inside the phone frame: no demo bar, nothing sticky offset by it */
+html.embed .demo-bar { display: none; }
+html.embed .topbar { top: 0; padding-top: 40px; } /* room for the frame's notch, like a phone status bar */
+html.embed { scrollbar-width: none; }
+html.embed::-webkit-scrollbar { display: none; }
+html.embed .drawer { padding-top: 44px; }
+html.embed .shell { min-height: 100vh; }
+html.embed .welcome { padding-top: 56px; }
 </style>
 </head>
 <body>
-<div class="demo-bar"><span>Demo · synthetic household · nothing here is real data</span><a href="index.html">← Back to the story</a></div>
+<div class="demo-bar"><span>Demo · synthetic household · nothing here is real data</span>
+  <div class="right">
+    <div class="viewseg" role="group" aria-label="Preview as">
+      <button type="button" data-view="desktop" aria-pressed="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1.5" y="2.5" width="13" height="9" rx="1.5"/><path d="M5.5 14h5"/></svg>Desktop</button>
+      <button type="button" data-view="phone" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="1.5" width="8" height="13" rx="1.8"/><path d="M7 12.5h2"/></svg>Phone</button>
+      <button type="button" data-view="both" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="3" width="9" height="8" rx="1.2"/><rect x="11" y="4" width="4" height="8" rx="1"/></svg>Side by side</button>
+    </div>
+    <a href="index.html">← Back to the story</a>
+  </div></div>
+<div class="stage" id="stage" hidden>
+  <div class="pitch"><span class="pill steady" style="align-self:flex-start">Member's view</span><h2>This is what members see on their phone.</h2>
+    <p>The same household and the same plan, in the app. Tap through it: tick items, take or decline a swap, open a need, ask a question.</p>
+    <p>Want it in your hand? Open this link on your phone:</p><span class="url" id="stage-url"></span></div>
+  <div class="col"><span class="cap" id="stage-cap">Phone</span><div class="pframe"><iframe id="pframe" title="NeedSmart on a phone" loading="lazy"></iframe></div></div>
+</div>
 
 <div class="shell">
   <aside class="side" aria-label="Main">
@@ -317,6 +369,8 @@ tbody tr.row:hover td { background: var(--surface-2); }
 <script>
 (function () {
   "use strict";
+  const EMBED = new URLSearchParams(location.search).has("embed"); // running inside the phone frame
+  if (EMBED) document.documentElement.classList.add("embed");
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const money = c => (c < 0 ? "−$" : "$") + (Math.abs(c) / 100).toFixed(2);
@@ -462,9 +516,9 @@ tbody tr.row:hover td { background: var(--surface-2); }
   };
   let M = null; // current model
   const S = { pid: store.get("pid", null), ticks: new Set(), swap: {}, noSwap: new Set(), base: "usual", asked: new Set(), chat: [] };
-  function loadPersona(pid) {
+  function loadPersona(pid, quiet) {
     const P = PERSONAS.find(p => p.id === pid) || PERSONAS[0];
-    S.pid = P.id; store.set("pid", P.id);
+    S.pid = P.id; if (!quiet) store.set("pid", P.id);
     const saved = store.get("state-" + P.id, {});
     S.ticks = new Set(saved.ticks || []); S.swap = saved.swap || {}; S.noSwap = new Set(saved.noSwap || []);
     S.asked = new Set(); S.chat = [];
@@ -685,8 +739,9 @@ tbody tr.row:hover td { background: var(--surface-2); }
   }
 
   /* ---------- Need detail drawer ---------- */
-  let lastFocus = null;
+  let lastFocus = null, openIdx = null;
   function openNeed(i) {
+    openIdx = i;
     const n = M.needs[i], L = planLine(n);
     lastFocus = document.activeElement;
     const indTxt = n.indiff === null ? "—" : n.indiff.toFixed(2);
@@ -712,7 +767,7 @@ tbody tr.row:hover td { background: var(--surface-2); }
     const sw = $("#d-swap");
     if (n.flexible) sw.addEventListener("change", () => { sw.checked ? S.noSwap.delete(i) : (S.noSwap.add(i), delete S.swap[i]); persist(); toast(sw.checked ? "Swaps on for " + n.n : "No more swaps for " + n.n); route(); });
   }
-  function closeNeed() { $("#drawer").hidden = true; $("#scrim").hidden = true; tip.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  function closeNeed() { openIdx = null; $("#drawer").hidden = true; $("#scrim").hidden = true; tip.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
   $("#scrim").addEventListener("click", closeNeed);
   addEventListener("keydown", e => { if (e.key === "Escape" && !$("#drawer").hidden) closeNeed(); });
 
@@ -851,9 +906,41 @@ tbody tr.row:hover td { background: var(--surface-2); }
     tick();
   }
 
+  /* ---------- Keep desktop and phone views in sync ---------- */
+  // Both documents share localStorage; a change in one fires 'storage' in the other.
+  addEventListener("storage", e => {
+    if (!e.key || !e.key.startsWith("ns-demo-") || e.key === "ns-demo-view") return;
+    if (!$("#welcome").hidden) return; // someone is mid-way through picking a household here
+    const pid = store.get("pid", S.pid), chat = S.chat, asked = S.asked, keep = pid === S.pid;
+    loadPersona(pid, true);
+    if (keep) { S.chat = chat; S.asked = asked; }
+    renderShell(); route();
+    if (openIdx !== null) { if (keep) openNeed(openIdx); else closeNeed(); }
+  });
+
+  /* ---------- Preview switch (parent page only) ---------- */
+  function setView(v) {
+    v = ["desktop", "phone", "both"].includes(v) ? v : "desktop";
+    document.documentElement.dataset.view = v;
+    $$("[data-view]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.view === v)));
+    const stage = $("#stage"), frame = $("#pframe");
+    stage.hidden = v === "desktop";
+    const wide = matchMedia("(min-width: 1101px)").matches; // the switch only exists on wide screens
+    if (v !== "desktop" && wide && !frame.getAttribute("src")) frame.src = location.pathname + "?embed=1" + (location.hash || "#plan");
+    $("#stage-cap").textContent = v === "both" ? "Phone · changes sync both ways" : "Phone";
+    store.set("view", v);
+  }
+  if (!EMBED) {
+    $("#stage-url").textContent = location.href.split("#")[0].split("?")[0];
+    $$("[data-view]").forEach(b => b.addEventListener("click", () => setView(b.dataset.view)));
+    // If the window grows wide enough later, load the phone frame for the saved view.
+    matchMedia("(min-width: 1101px)").addEventListener("change", e => { if (e.matches) setView(document.documentElement.dataset.view); });
+    setView(store.get("view", "desktop"));
+  }
+
   /* ---------- Boot ---------- */
   if (S.pid && PERSONAS.some(p => p.id === S.pid)) { loadPersona(S.pid); renderShell(); route(); }
-  else { loadPersona("rivera"); renderShell(); route(); showWelcome(); }
+  else { loadPersona("rivera"); renderShell(); route(); if (!EMBED) showWelcome(); }
 })();
 </script>
 </body>
